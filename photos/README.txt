@@ -1,21 +1,14 @@
 HOW TO ADD PHOTOS FOR THE PICTURE PUZZLE GAME
 =============================================
 
-Easiest way:
-  1. Copy photos into this folder
-  2. Name them 1.jpg, 2.jpg, 3.jpg, ... (up to 30)
-     (.jpeg, .png, .webp, .gif and iPhone .heic/.heif also
-      work — e.g. 1.png or 1.heic, no conversion needed)
-  3. Re-upload / redeploy the site
+1. Copy photos into this folder — any file names are fine
+   (.jpg, .jpeg, .png, .webp, .gif, .heic all work)
+2. Double-click  update-manifest.bat  (rebuilds manifest.json
+   so the game knows which photos exist)
+3. Commit + push / re-upload the site
 
-The game finds them automatically and shows them as choices.
+That's it. The game shows every photo listed in manifest.json.
 Photos are cropped to a square from the middle, so keep the
 important part (faces!) near the center.
 
-Prefer your own file names? Create a file here called
-manifest.json containing a list like:
-
-  ["beach-day.jpg", "grandma.jpg", "our-dog.png"]
-
-If manifest.json exists, the game uses that list instead of
-looking for numbered files.
+Tip: JPEG around 1-2 MB per photo loads fastest on the iPad.
