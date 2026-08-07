@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Landon's Games">
+<title>Landon's Game Room</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <button id="home-btn" class="top-btn hidden" aria-label="Go home">🏠 Home</button>
+  <button id="help-btn" class="top-btn hidden" aria-label="Ask for help">🖐️ Help</button>
+  <div id="brand">🌟 Landon's Game Room</div>
+  <div id="top-right">
+    <div id="star-count" aria-label="Stars earned">⭐ <span id="star-total">0</span></div>
+    <button id="music-btn" class="top-btn" aria-label="Toggle music">🎵</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ MENU ============ -->
+  <section id="screen-menu" class="screen active">
+    <h1 class="menu-title">Pick a game!</h1>
+    <div class="menu-grid">
+      <button class="game-card" data-game="mathpop" style="--card-color:#7ec8e3">
+        <span class="card-emoji">🫧</span>
+        <span class="card-name">Math Bubbles</span>
+      </button>
+      <button class="game-card" data-game="spelling" style="--card-color:#ffb347">
+        <span class="card-emoji">🔤</span>
+        <span class="card-name">Word Builder</span>
+      </button>
+      <button class="game-card" data-game="memory" style="--card-color:#90d4a3">
+        <span class="card-emoji">🐾</span>
+        <span class="card-name">Animal Match</span>
+      </button>
+      <button class="game-card" data-game="simon" style="--card-color:#c9a7eb">
+        <span class="card-emoji">🐱</span>
+        <span class="card-name">Copy Cat</span>
+      </button>
+      <button class="game-card" data-game="counting" style="--card-color:#f9a8c2">
+        <span class="card-emoji">🐟</span>
+        <span class="card-name">Counting Time</span>
+      </button>
+      <button class="game-card" data-game="music" style="--card-color:#ffd966">
+        <span class="card-emoji">🎹</span>
+        <span class="card-name">Music Maker</span>
+      </button>
+      <button class="game-card" data-game="puzzle" style="--card-color:#a0aef0">
+        <span class="card-emoji">🧩</span>
+        <span class="card-name">Puzzle Builder</span>
+      </button>
+      <button class="game-card" data-game="maze" style="--card-color:#ffa07a">
+        <span class="card-emoji">🧀</span>
+        <span class="card-name">Cheese Maze</span>
+      </button>
+      <button class="game-card" data-game="photopuzzle" style="--card-color:#8fd3c7">
+        <span class="card-emoji">🖼️</span>
+        <span class="card-name">Picture Puzzle</span>
+      </button>
+      <button class="game-card" data-game="sortit" style="--card-color:#b5e48c">
+        <span class="card-emoji">🗂️</span>
+        <span class="card-name">Sort It!</span>
+      </button>
+      <button class="game-card" data-game="feelings" style="--card-color:#ffc6d9">
+        <span class="card-emoji">😊</span>
+        <span class="card-name">Feelings</span>
+      </button>
+      <button class="game-card" data-game="trace" style="--card-color:#ffd6a5">
+        <span class="card-emoji">✏️</span>
+        <span class="card-name">Trace It</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ MATH BUBBLES ============ -->
+  <section id="screen-mathpop" class="screen">
+    <div class="game-header">
+      <h2>🫧 Math Bubbles <span id="math-level" class="level-badge"></span></h2>
+      <p class="game-hint">Drag the right answer into the box!</p>
+    </div>
+    <div id="math-problem" class="big-problem"></div>
+    <div id="bubble-area"></div>
+  </section>
+
+  <!-- ============ WORD BUILDER ============ -->
+  <section id="screen-spelling" class="screen">
+    <div class="game-header">
+      <h2>🔤 Word Builder <span id="spell-level" class="level-badge"></span></h2>
+      <p class="game-hint">Drag the letters into place to spell the word!</p>
+    </div>
+    <div id="spell-picture"></div>
+    <button id="spell-hear" class="chunky-btn small">🔊 Hear it</button>
+    <div id="spell-slots"></div>
+    <div id="spell-letters"></div>
+  </section>
+
+  <!-- ============ ANIMAL MATCH ============ -->
+  <section id="screen-memory" class="screen">
+    <div class="game-header">
+      <h2>🐾 Animal Match</h2>
+      <p class="game-hint">Find the matching pairs!</p>
+    </div>
+    <div id="memory-grid"></div>
+  </section>
+
+  <!-- ============ COPY CAT ============ -->
+  <section id="screen-simon" class="screen">
+    <div class="game-header">
+      <h2>🐱 Copy Cat</h2>
+      <p id="simon-status" class="game-hint">Watch and listen, then copy the pattern!</p>
+    </div>
+    <div id="simon-round" class="round-badge"></div>
+    <div id="simon-pads">
+      <button class="simon-pad" data-pad="0" style="--pad-color:#ff8a8a">🔴</button>
+      <button class="simon-pad" data-pad="1" style="--pad-color:#ffd966">🟡</button>
+      <button class="simon-pad" data-pad="2" style="--pad-color:#90d4a3">🟢</button>
+      <button class="simon-pad" data-pad="3" style="--pad-color:#7ec8e3">🔵</button>
+    </div>
+    <button id="simon-start" class="chunky-btn">▶️ Start</button>
+  </section>
+
+  <!-- ============ COUNTING TIME ============ -->
+  <section id="screen-counting" class="screen">
+    <div class="game-header">
+      <h2>🐟 Counting Time</h2>
+      <p class="game-hint">Drag each one into the basket to count, then pick the number!</p>
+    </div>
+    <div id="count-area">
+      <div id="count-basket">🧺<span id="basket-tag" class="count-tag">0</span></div>
+    </div>
+    <div id="count-answers"></div>
+  </section>
+
+  <!-- ============ PUZZLE BUILDER ============ -->
+  <section id="screen-puzzle" class="screen">
+    <div class="game-header">
+      <h2>🧩 Puzzle Builder <span id="puzzle-level" class="level-badge"></span></h2>
+      <p class="game-hint">Drag the pieces to build the picture!</p>
+    </div>
+    <div class="puzzle-wrap">
+      <div id="puzzle-board" class="puzzle-board"></div>
+      <div id="puzzle-tray" class="puzzle-tray"></div>
+    </div>
+  </section>
+
+  <!-- ============ PICTURE PUZZLE ============ -->
+  <section id="screen-photopuzzle" class="screen">
+    <div class="game-header">
+      <h2>🖼️ Picture Puzzle <span id="photo-level" class="level-badge"></span></h2>
+      <p class="game-hint">Pick a photo, then drag the pieces to build it!</p>
+    </div>
+    <div id="photo-picker">
+      <p id="photo-empty" class="game-hint hidden">No photos yet! Grown-ups: put photos named 1.jpg, 2.jpg, 3.jpg … into the site's <b>photos</b> folder and re-upload the site.</p>
+      <div id="photo-thumbs"></div>
+    </div>
+    <div id="photo-wrap" class="puzzle-wrap hidden">
+      <div id="photo-board" class="puzzle-board"></div>
+      <div id="photo-tray" class="puzzle-tray"></div>
+    </div>
+    <button id="photo-back" class="chunky-btn small hidden">🖼️ Choose another photo</button>
+  </section>
+
+  <!-- ============ CHEESE MAZE ============ -->
+  <section id="screen-maze" class="screen">
+    <div class="game-header">
+      <h2>🧀 Cheese Maze <span id="maze-level" class="level-badge"></span></h2>
+      <p class="game-hint">Drag the mouse through the maze to the cheese!</p>
+    </div>
+    <div id="maze-board"></div>
+  </section>
+
+  <!-- ============ SORT IT! ============ -->
+  <section id="screen-sortit" class="screen">
+    <div class="game-header">
+      <h2>🗂️ Sort It!</h2>
+      <p id="sort-prompt" class="game-hint"></p>
+    </div>
+    <button id="sort-hear" class="chunky-btn small">🔊 Hear it</button>
+    <div id="sort-cards"></div>
+    <div id="sort-bin">
+      <span class="sort-bin-emoji">🗂️</span>
+      <span id="sort-bin-label"></span>
+    </div>
+  </section>
+
+  <!-- ============ FEELINGS ============ -->
+  <section id="screen-feelings" class="screen">
+    <div class="game-header">
+      <h2>😊 Feelings <span id="feel-level" class="level-badge"></span></h2>
+      <p id="feel-sentence" class="game-hint"></p>
+    </div>
+    <button id="feel-hear" class="chunky-btn small">🔊 Hear it again</button>
+    <div id="feel-scene"></div>
+    <div id="feel-faces"></div>
+  </section>
+
+  <!-- ============ TRACE IT ============ -->
+  <section id="screen-trace" class="screen">
+    <div class="game-header">
+      <h2>✏️ Trace It <span id="trace-label" class="level-badge"></span></h2>
+      <p class="game-hint">Follow the glowing dot with your finger!</p>
+    </div>
+    <div id="trace-stage"></div>
+    <div id="trace-modes">
+      <button class="chunky-btn small trace-mode-btn" data-mode="abc">🔠 ABC</button>
+      <button class="chunky-btn small trace-mode-btn" data-mode="lower">🔡 abc</button>
+      <button class="chunky-btn small trace-mode-btn" data-mode="num">🔢 123</button>
+      <button class="chunky-btn small trace-mode-btn" data-mode="cut">✂️ Cut</button>
+    </div>
+  </section>
+
+  <!-- ============ MUSIC MAKER ============ -->
+  <section id="screen-music" class="screen">
+    <div class="game-header">
+      <h2>🎹 Music Maker</h2>
+      <p id="music-hint" class="game-hint">Tap the bars to make music!</p>
+    </div>
+    <div id="xylophone"></div>
+    <div id="song-buttons">
+      <button class="chunky-btn small song-btn" data-song="twinkle">✨ Twinkle Twinkle</button>
+      <button class="chunky-btn small song-btn" data-song="mary">🐑 Mary's Lamb</button>
+      <button class="chunky-btn small song-btn" data-song="hotcross">🥐 Hot Cross Buns</button>
+      <button id="music-free" class="chunky-btn small">🎨 Free Play</button>
+    </div>
+  </section>
+</main>
+
+<div id="celebration" class="hidden">
+  <div id="celebration-text"></div>
+</div>
+<div id="freeze-overlay" class="hidden"><span>⏳</span></div>
+<div id="confetti-layer"></div>
+
+<script src="js/audio.js"></script>
+<script src="js/drag.js"></script>
+<script src="js/app.js"></script>
+<script src="js/games/mathpop.js"></script>
+<script src="js/games/spelling.js"></script>
+<script src="js/games/memory.js"></script>
+<script src="js/games/simon.js"></script>
+<script src="js/games/counting.js"></script>
+<script src="js/games/music.js"></script>
+<script src="js/games/puzzle.js"></script>
+<script src="js/games/photopuzzle.js"></script>
+<script src="js/games/maze.js"></script>
+<script src="js/games/sortit.js"></script>
+<script src="js/games/feelings.js"></script>
+<script src="js/games/trace.js"></script>
+</body>
+</html>
