@@ -9,10 +9,22 @@ const Sound = (() => {
     if (!ctx) {
       const AC = window.AudioContext || window.webkitAudioContext;
       ctx = new AC();
+      // iOS parks the context in a non-standard "interrupted" state after
+      // speech synthesis grabs the audio session — claw it back
+      ctx.onstatechange = () => {
+        if (ctx.state === "interrupted") ctx.resume();
+      };
     }
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state !== "running") ctx.resume();
     return ctx;
   }
+
+  // iOS: speech synthesis interrupts WebAudio, and after that tones die
+  // silently until resume() runs inside a user gesture — so every tap is
+  // a chance to bring the context back
+  document.addEventListener("pointerdown", () => {
+    if (ctx && ctx.state !== "running") ctx.resume();
+  }, true);
 
   // Play one tone. Gentle envelopes everywhere: nothing harsh or startling.
   function tone(freq, { type = "sine", dur = 0.3, gain = 0.22, when = 0, slideTo = null } = {}) {
@@ -67,15 +79,29 @@ const Sound = (() => {
     tone(N.C6, { type: "sine", dur: 0.3, gain: 0.2, when: 0.1 });
   }
 
-  /* ---- Speech (iPad's built-in voice) ---- */
-  function speak(text, { rate = 0.95, pitch = 1.1 } = {}) {
+  /* ---- Speech (iPad's built-in voice) ----
+     Speaking is deferred a beat: on iOS, starting speech interrupts
+     WebAudio, so a tone played in the same tick as speak() would be
+     silenced. The short delay lets sound effects ring out first. */
+  function speak(text, { rate = 0.95, pitch = 1.1, delay = 350 } = {}) {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
+    clearTimeout(speak._t);
     const u = new SpeechSynthesisUtterance(text);
     u.rate = rate;
     u.pitch = pitch;
     u.lang = "en-US";
-    window.speechSynthesis.speak(u);
+    // hand the audio session back to WebAudio when speech finishes (iOS)
+    u.onend = u.onerror = () => {
+      if (ctx && ctx.state !== "running") ctx.resume();
+    };
+    speak._t = setTimeout(() => window.speechSynthesis.speak(u), delay);
+  }
+
+  // stop current AND pending speech (freeze / leaving a game)
+  function hush() {
+    clearTimeout(speak._t);
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
   /* ---- Background music: soft pentatonic loop ---- */
@@ -104,6 +130,6 @@ const Sound = (() => {
     }
   }
 
-  return { ensure, tone, N, pop, click, flip, success, fanfare, star, speak, setMusic,
+  return { ensure, tone, N, pop, click, flip, success, fanfare, star, speak, hush, setMusic,
            get musicOn() { return musicOn; } };
 })();

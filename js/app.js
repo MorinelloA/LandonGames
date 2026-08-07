@@ -47,7 +47,7 @@ const App = (() => {
   function freeze(ms = 3000, onDone = null) {
     if (frozen) return;
     frozen = true;
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    Sound.hush();
     freezeEl.classList.remove("hidden");
     setTimeout(() => {
       frozen = false;
@@ -98,7 +98,7 @@ const App = (() => {
     Sound.click();
     if (currentGame && games[currentGame].stop) games[currentGame].stop();
     currentGame = null;
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    Sound.hush();
     show("menu");
   }
 
