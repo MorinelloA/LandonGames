@@ -34,7 +34,7 @@ App.games.photopuzzle = (() => {
     } catch (_) {}
     // ...otherwise look for numbered files (1.jpg, 2.jpg, ...) and stop at
     // the first missing number, so we don't probe for photos that aren't there
-    const exts = ["jpg", "jpeg", "png", "webp", "gif"];
+    const exts = ["jpg", "jpeg", "png", "webp", "gif", "heic", "heif", "JPG", "HEIC"];
     const found = [];
     for (let i = 1; i <= 30; i++) {
       const hits = await Promise.all(exts.map((e) =>
@@ -46,6 +46,59 @@ App.games.photopuzzle = (() => {
     }
     photoList = found;
     return photoList;
+  }
+
+  /* ---- HEIC support ----
+     iPhone photos come as .heic, which only Safari decodes natively.
+     Everywhere else, lazy-load the vendored heic-to converter (libheif)
+     and turn the photo into a JPEG blob the browser can show. Converted
+     URLs are cached so each photo converts at most once per page load. */
+  let heicLib = null;
+  function loadHeicLib() {
+    if (typeof HeicTo === "function") return Promise.resolve();
+    if (!heicLib) {
+      heicLib = new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = "js/lib/heic-to.js";
+        s.onload = res;
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    return heicLib;
+  }
+
+  // conversions run one at a time — converting a whole gallery in parallel
+  // overwhelms both the connection and the wasm decoder
+  let convertChain = Promise.resolve();
+  function convertHeic(url) {
+    const job = convertChain.then(() =>
+      loadHeicLib()
+        .then(() => fetch(url))
+        .then((r) => r.blob())
+        .then((blob) => HeicTo({ blob, type: "image/jpeg", quality: 0.92 }))
+        .then((out) => URL.createObjectURL(Array.isArray(out) ? out[0] : out))
+    );
+    convertChain = job.catch(() => {}); // a failed job must not stall the queue
+    return job;
+  }
+
+  const heicCache = new Map();
+  function displayableUrl(url) {
+    if (!/\.hei[cf]$/i.test(url)) return Promise.resolve(url);
+    if (!heicCache.has(url)) {
+      heicCache.set(url, new Promise((res) => {
+        const probe = new Image();
+        probe.onload = () => res(url); // this browser decodes HEIC natively
+        probe.onerror = () => {
+          convertHeic(url)
+            .then(res)
+            .catch(() => { heicCache.delete(url); res(null); }); // failed — retry next time
+        };
+        probe.src = url;
+      }));
+    }
+    return heicCache.get(url);
   }
 
   // photos aren't square — crop the middle into a square for the board
@@ -78,9 +131,12 @@ App.games.photopuzzle = (() => {
     photos.forEach((url) => {
       const thumb = document.createElement("div");
       thumb.className = "photo-thumb";
-      thumb.style.backgroundImage = `url(${url})`;
-      thumb.addEventListener("click", () => startPuzzle(url));
       thumbsEl.appendChild(thumb);
+      displayableUrl(url).then((disp) => {
+        if (!disp) { thumb.remove(); return; } // undecodable photo — skip it
+        thumb.style.backgroundImage = `url(${disp})`;
+        thumb.addEventListener("click", () => startPuzzle(disp));
+      });
     });
   }
 

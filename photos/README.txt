@@ -4,7 +4,8 @@ HOW TO ADD PHOTOS FOR THE PICTURE PUZZLE GAME
 Easiest way:
   1. Copy photos into this folder
   2. Name them 1.jpg, 2.jpg, 3.jpg, ... (up to 30)
-     (.jpeg, .png, .webp and .gif also work — e.g. 1.png)
+     (.jpeg, .png, .webp, .gif and iPhone .heic/.heif also
+      work — e.g. 1.png or 1.heic, no conversion needed)
   3. Re-upload / redeploy the site
 
 The game finds them automatically and shows them as choices.
