@@ -2,3 +2,6 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# scratch output from tools/make-icons.py --preview
+tools/preview.png

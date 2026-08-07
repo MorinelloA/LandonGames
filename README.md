@@ -62,9 +62,26 @@ Then on the iPad, make it feel like a real app:
 
 1. Open the link in Safari
 2. Tap the Share button → **Add to Home Screen**
-3. It gets its own icon and opens full-screen with no browser bars
+3. It gets its own icon (the gold star) and opens full-screen with no browser bars
 
 (GitHub Pages works just as well if you prefer: push this folder to a repo and enable Pages.)
+
+## The app icon
+
+The home screen icon lives in `icons/` and is already committed — nothing to do
+unless you want to change how it looks. iOS caches it hard, so if you ever swap it,
+delete the home screen shortcut and re-add it to see the new one.
+
+To change the art, edit the palette constants at the top of `tools/make-icons.py`
+and re-run it (needs `pip install pillow numpy` — the site itself still has no
+dependencies), then commit the regenerated PNGs:
+
+```bash
+python tools/make-icons.py --preview
+```
+
+`--preview` also writes `tools/preview.png`, showing the icon at every size with
+iOS's rounded-square mask applied.
 
 ## Testing on a computer
 
