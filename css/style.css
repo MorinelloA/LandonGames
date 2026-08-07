@@ -91,7 +91,10 @@ main {
   flex-direction: column;
   align-items: center;
   padding: 8px 20px calc(16px + env(safe-area-inset-bottom));
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .screen.active { display: flex; }
@@ -181,6 +184,7 @@ main {
   flex: 1;
   width: 100%;
   max-width: 950px;
+  min-height: 320px;
 }
 
 .bubble {
@@ -372,6 +376,7 @@ main {
   flex: 1;
   width: min(92vw, 900px);
   position: relative;
+  min-height: 300px;
 }
 
 .count-item {
@@ -442,6 +447,7 @@ main {
   width: min(94vw, 980px);
   justify-content: center;
   padding: 10px 0;
+  min-height: 240px;
 }
 
 .xylo-bar {
@@ -619,7 +625,7 @@ main {
   align-items: center;
   justify-content: center;
   touch-action: none;
-  min-height: 0;
+  min-height: 300px;
 }
 
 #trace-stage svg {
@@ -883,8 +889,62 @@ main {
 
 #maze-player.win { animation: countBounce 0.5s 3; }
 
+/* ===== iPad Mini landscape (1024x768; ~650px tall in Safari with browser chrome) =====
+   Tighten vertical spacing so every game fits without scrolling where possible. */
+@media (orientation: landscape) and (max-height: 780px) {
+  #topbar { padding: max(6px, env(safe-area-inset-top)) 14px 6px; }
+  .screen { padding: 4px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .menu-title { margin: 2px 0 10px; }
+  .game-header { margin-bottom: 4px; }
+  .chunky-btn { margin: 6px 0; }
+  .big-problem { margin: 4px 0 8px; padding: 8px 32px; }
+  #spell-slots { margin: 10px 0 16px; }
+  #feel-scene { margin: 6px 0; padding: 10px 32px; }
+  #sort-bin { padding: 8px 32px 12px; margin-bottom: 6px; }
+}
+
+/* ===== Rotate prompt: shown whenever the device is held in portrait =====
+   iPad Safari can't lock orientation from the browser, so this friendly
+   full-screen prompt is the "lock" — nothing underneath is tappable. */
+#rotate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: linear-gradient(160deg, #e8f6ff 0%, #fdf3ff 55%, #fff8e8 100%);
+  text-align: center;
+  padding: 30px;
+}
+
+#rotate-overlay .rotate-emoji {
+  font-size: clamp(72px, 18vw, 120px);
+  line-height: 1;
+  animation: rotateNudge 2s ease-in-out infinite;
+}
+
+#rotate-overlay p {
+  font-size: clamp(24px, 5vw, 34px);
+  font-weight: 800;
+  color: #4a4f6d;
+}
+
+@keyframes rotateNudge {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 80% { transform: rotate(-90deg); }
+  100% { transform: rotate(-90deg); }
+}
+
+@media (orientation: portrait) {
+  #rotate-overlay { display: flex; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bubble { animation: none; }
   .confetti { display: none; }
   .xylo-bar.next-note { animation: none; outline: 5px solid #ffd966; }
+  #rotate-overlay .rotate-emoji { animation: none; transform: rotate(-90deg); }
 }

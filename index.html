@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Landon's Games">
 <title>Landon's Game Room</title>
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -155,7 +156,7 @@
       <p class="game-hint">Pick a photo, then drag the pieces to build it!</p>
     </div>
     <div id="photo-picker">
-      <p id="photo-empty" class="game-hint hidden">No photos yet! Grown-ups: put photos named 1.jpg, 2.jpg, 3.jpg … into the site's <b>photos</b> folder and re-upload the site.</p>
+      <p id="photo-empty" class="game-hint hidden">No photos yet! Grown-ups: put photos named 1.jpg, 2.jpg, 3.jpg … (iPhone <b>.heic</b> photos work too) into the site's <b>photos</b> folder and re-upload the site.</p>
       <div id="photo-thumbs"></div>
     </div>
     <div id="photo-wrap" class="puzzle-wrap hidden">
@@ -235,6 +236,10 @@
 </div>
 <div id="freeze-overlay" class="hidden"><span>⏳</span></div>
 <div id="confetti-layer"></div>
+<div id="rotate-overlay">
+  <span class="rotate-emoji">📱</span>
+  <p>Turn me sideways!</p>
+</div>
 
 <script src="js/audio.js"></script>
 <script src="js/drag.js"></script>

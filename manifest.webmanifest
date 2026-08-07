@@ -1,0 +1,9 @@
+{
+  "name": "Landon's Game Room",
+  "short_name": "Landon's Games",
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#e8f6ff",
+  "theme_color": "#e8f6ff"
+}

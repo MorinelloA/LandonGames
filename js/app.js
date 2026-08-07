@@ -135,6 +135,20 @@ const App = (() => {
     return a;
   }
 
+  /* ---- Best-effort landscape lock ----
+     iPad Safari doesn't allow locking from the browser (the CSS rotate
+     overlay covers portrait instead), but browsers that support the
+     Screen Orientation API will honor this. */
+  function tryLockLandscape() {
+    try {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(() => {});
+      }
+    } catch (_) {}
+  }
+  tryLockLandscape();
+  window.addEventListener("pointerdown", tryLockLandscape, { once: true });
+
   renderStars();
 
   return { games, awardStars, showCelebration, confettiBurst, shuffle, goHome, freeze,
