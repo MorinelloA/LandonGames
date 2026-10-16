@@ -11,31 +11,35 @@ App.games.feelings = (() => {
 
   const FACES = { happy: "😊", sad: "😢", angry: "😠", scared: "😨" };
 
+  // `who` sets the pronoun in the question, and every story names its
+  // character. `alsoOk` feelings are a fair answer too (a knocked-down
+  // tower can make you sad, not just angry), so they're never offered as
+  // the wrong choice. Scenes show what happened, never how anyone feels.
   const SCENARIOS = [
-    { scene: "👦🍦⬇️", text: "The boy dropped his ice cream.", answer: "sad" },
-    { scene: "👧🎂🎈", text: "It is the girl's birthday party!", answer: "happy" },
-    { scene: "👦🎁", text: "The boy got a new toy!", answer: "happy" },
-    { scene: "👧🧸💔", text: "The girl's teddy bear ripped.", answer: "sad" },
-    { scene: "👦🐶", text: "The boy is playing with his puppy!", answer: "happy" },
-    { scene: "👧🌧️⚽", text: "It is raining, so the girl can't play outside.", answer: "sad" },
-    { scene: "👦🍕", text: "The boy is eating his favorite pizza!", answer: "happy" },
-    { scene: "👧😢🎈", text: "The girl's balloon flew away.", answer: "sad" },
-    { scene: "👦🏊", text: "The boy gets to go swimming today!", answer: "happy" },
-    { scene: "👧🍪∅", text: "The cookies are all gone.", answer: "sad" },
-    { scene: "👦🚂🎉", text: "The boy is going on a train ride!", answer: "happy" },
-    { scene: "👧🤕", text: "The girl fell down and hurt her knee.", answer: "sad" },
-    { scene: "👦🧱💥", text: "Someone knocked down the boy's tower.", answer: "angry" },
-    { scene: "👧🍭❌", text: "Her brother took the girl's candy.", answer: "angry" },
-    { scene: "👦🚗🙅", text: "The boy has to stop playing and clean up.", answer: "angry" },
-    { scene: "👧📕✏️", text: "Someone scribbled in the girl's book.", answer: "angry" },
-    { scene: "👦🐕📢", text: "A big dog barked at the boy.", answer: "scared" },
-    { scene: "👧⛈️", text: "The thunder is very loud.", answer: "scared" },
-    { scene: "👦🌑", text: "The lights went out and it is dark.", answer: "scared" },
-    { scene: "👧🕷️", text: "A big spider ran by the girl.", answer: "scared" },
-    { scene: "👦🏆", text: "The boy won the race!", answer: "happy" },
-    { scene: "👧👵💝", text: "Grandma came to visit the girl!", answer: "happy" },
-    { scene: "👦🎮🚫", text: "The boy's game turned off before he saved.", answer: "angry" },
-    { scene: "👧🛝", text: "The girl is going to the playground!", answer: "happy" },
+    { who: "boy", scene: "👦🍦⬇️", text: "The boy dropped his ice cream.", answer: "sad" },
+    { who: "girl", scene: "👧🎂🎈", text: "It is the girl's birthday party!", answer: "happy" },
+    { who: "boy", scene: "👦🎁", text: "The boy got a new toy!", answer: "happy" },
+    { who: "girl", scene: "👧🧸", text: "The girl's teddy bear ripped.", answer: "sad" },
+    { who: "boy", scene: "👦🐶", text: "The boy is playing with his puppy!", answer: "happy" },
+    { who: "girl", scene: "👧🌧️⚽", text: "It is raining, so the girl can't play outside.", answer: "sad", alsoOk: ["angry"] },
+    { who: "boy", scene: "👦🍕", text: "The boy is eating his favorite pizza!", answer: "happy" },
+    { who: "girl", scene: "👧🎈💨", text: "The girl's balloon flew away.", answer: "sad" },
+    { who: "boy", scene: "👦🏊", text: "The boy gets to go swimming today!", answer: "happy" },
+    { who: "girl", scene: "👧🍪", text: "The girl's cookies are all gone.", answer: "sad" },
+    { who: "boy", scene: "👦🚂", text: "The boy is going on a train ride!", answer: "happy" },
+    { who: "girl", scene: "👧🩹", text: "The girl fell down and hurt her knee.", answer: "sad" },
+    { who: "boy", scene: "👦🧱💥", text: "Someone knocked down the boy's tower.", answer: "angry", alsoOk: ["sad"] },
+    { who: "girl", scene: "👧🍭👦", text: "Her brother took the girl's candy.", answer: "angry", alsoOk: ["sad"] },
+    { who: "boy", scene: "👦🧸🧺", text: "The boy has to stop playing and clean up.", answer: "angry", alsoOk: ["sad"] },
+    { who: "girl", scene: "👧📕✏️", text: "Someone scribbled in the girl's book.", answer: "angry", alsoOk: ["sad"] },
+    { who: "boy", scene: "👦🐕📢", text: "A big dog barked at the boy.", answer: "scared" },
+    { who: "girl", scene: "👧⛈️", text: "The girl hears very loud thunder.", answer: "scared" },
+    { who: "boy", scene: "👦🌑", text: "The lights went out, and the boy is in the dark.", answer: "scared" },
+    { who: "girl", scene: "👧🕷️", text: "A big spider ran by the girl.", answer: "scared" },
+    { who: "boy", scene: "👦🏆", text: "The boy won the race!", answer: "happy" },
+    { who: "girl", scene: "👧👵", text: "Grandma came to visit the girl!", answer: "happy" },
+    { who: "boy", scene: "👦🎮🔌", text: "The boy's game turned off before he saved.", answer: "angry", alsoOk: ["sad"] },
+    { who: "girl", scene: "👧🛝", text: "The girl is going to the playground!", answer: "happy" },
   ];
 
   // which feelings are in play, and how many face choices are shown
@@ -67,11 +71,11 @@ App.games.feelings = (() => {
     return SCENARIOS.filter((s) => pool.includes(s.answer));
   }
 
+  // the story, then the question, queued so the question never cuts it off
   function speakScenario() {
     if (!current) return;
-    Sound.speak(current.text);
-    const who = current.text.includes("girl") || current.text.includes("Grandma") ? "she" : "he";
-    setTimeout(() => running && Sound.speak("How does " + who + " feel?"), 2200);
+    const pronoun = current.who === "girl" ? "she" : "he";
+    Sound.say([current.text, "How does " + pronoun + " feel?"]);
   }
 
   function makeRound() {
@@ -79,11 +83,12 @@ App.games.feelings = (() => {
     current = deck.pop();
     hadError = false;
 
-    sceneEl.textContent = current.scene.replace("∅", "");
+    sceneEl.textContent = current.scene;
     sentenceEl.textContent = current.text;
 
     const { pool, field } = LEVELS[level - 1];
-    const others = pool.filter((f) => f !== current.answer);
+    const fair = current.alsoOk || [];
+    const others = pool.filter((f) => f !== current.answer && !fair.includes(f));
     const choices = App.shuffle([current.answer, ...App.shuffle(others).slice(0, field - 1)]);
 
     facesEl.innerHTML = "";

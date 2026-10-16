@@ -92,22 +92,31 @@ const Sound = (() => {
      Speaking is deferred a beat: on iOS, starting speech interrupts
      WebAudio, so a tone played in the same tick as speak() would be
      silenced. The short delay lets sound effects ring out first. */
-  function speak(text, { rate = 0.95, pitch = 1.1, delay = 350 } = {}) {
+  function speak(text, opts) {
+    say([text], opts);
+  }
+
+  // Several lines in a row, each finishing before the next starts (a story,
+  // then its question). Queued in one go, so nothing cuts anything off.
+  function say(lines, { rate = 0.95, pitch = 1.1, delay = 350 } = {}) {
     if (!("speechSynthesis" in window)) return;
     clearTimeout(speak._t);
     // cancel() on an IDLE synthesizer is a known iOS wedge (speaking gets
     // stuck true forever) — only cancel when something is actually queued
     if (speechBusy()) window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.pitch = pitch;
-    u.lang = "en-US";
+    const us = lines.map((text) => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = rate;
+      u.pitch = pitch;
+      u.lang = "en-US";
+      return u;
+    });
     // hand the audio session back to WebAudio when speech finishes (iOS)
-    u.onend = u.onerror = () => {
+    us[us.length - 1].onend = us[us.length - 1].onerror = () => {
       if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
     };
-    speak._u = u; // Safari GCs unreferenced utterances mid-speech
-    speak._t = setTimeout(() => window.speechSynthesis.speak(u), delay);
+    speak._u = us; // Safari GCs unreferenced utterances mid-speech
+    speak._t = setTimeout(() => us.forEach((u) => window.speechSynthesis.speak(u)), delay);
   }
 
   // stop current AND pending speech (freeze / leaving a game)
@@ -142,6 +151,6 @@ const Sound = (() => {
     }
   }
 
-  return { ensure, tone, N, pop, click, flip, success, fanfare, star, speak, hush, setMusic,
+  return { ensure, tone, N, pop, click, flip, success, fanfare, star, speak, say, hush, setMusic,
            get musicOn() { return musicOn; } };
 })();
