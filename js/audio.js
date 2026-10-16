@@ -5,25 +5,34 @@ const Sound = (() => {
   let musicTimer = null;
   let musicStep = 0;
 
+  // iOS hands the audio session to whichever of WebAudio / speech asks for
+  // it last, so never resume the context while speech is talking — that
+  // steals the session mid-utterance and can wedge BOTH until reload.
+  function speechBusy() {
+    return "speechSynthesis" in window &&
+           (window.speechSynthesis.speaking || window.speechSynthesis.pending);
+  }
+
   function ensure() {
+    if (ctx && ctx.state === "closed") ctx = null; // iOS can kill it outright
     if (!ctx) {
       const AC = window.AudioContext || window.webkitAudioContext;
       ctx = new AC();
-      // iOS parks the context in a non-standard "interrupted" state after
-      // speech synthesis grabs the audio session — claw it back
-      ctx.onstatechange = () => {
-        if (ctx.state === "interrupted") ctx.resume();
-      };
     }
-    if (ctx.state !== "running") ctx.resume();
+    if (ctx.state !== "running" && !speechBusy()) ctx.resume().catch(() => {});
     return ctx;
   }
 
-  // iOS: speech synthesis interrupts WebAudio, and after that tones die
-  // silently until resume() runs inside a user gesture — so every tap is
-  // a chance to bring the context back
+  // Every tap is a user gesture — the only time iOS reliably lets us
+  // revive audio. Unstick speech if iOS wedged it in "paused", and bring
+  // WebAudio back only when speech is idle.
   document.addEventListener("pointerdown", () => {
-    if (ctx && ctx.state !== "running") ctx.resume();
+    if ("speechSynthesis" in window && window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+    if (ctx && ctx.state !== "running" && !speechBusy()) {
+      ctx.resume().catch(() => {});
+    }
   }, true);
 
   // Play one tone. Gentle envelopes everywhere: nothing harsh or startling.
@@ -85,23 +94,26 @@ const Sound = (() => {
      silenced. The short delay lets sound effects ring out first. */
   function speak(text, { rate = 0.95, pitch = 1.1, delay = 350 } = {}) {
     if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
     clearTimeout(speak._t);
+    // cancel() on an IDLE synthesizer is a known iOS wedge (speaking gets
+    // stuck true forever) — only cancel when something is actually queued
+    if (speechBusy()) window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.rate = rate;
     u.pitch = pitch;
     u.lang = "en-US";
     // hand the audio session back to WebAudio when speech finishes (iOS)
     u.onend = u.onerror = () => {
-      if (ctx && ctx.state !== "running") ctx.resume();
+      if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
     };
+    speak._u = u; // Safari GCs unreferenced utterances mid-speech
     speak._t = setTimeout(() => window.speechSynthesis.speak(u), delay);
   }
 
   // stop current AND pending speech (freeze / leaving a game)
   function hush() {
     clearTimeout(speak._t);
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (speechBusy()) window.speechSynthesis.cancel();
   }
 
   /* ---- Background music: soft pentatonic loop ---- */
