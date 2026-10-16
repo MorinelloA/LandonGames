@@ -5,6 +5,7 @@
 //     targets: () => [elements],  possible drop targets
 //     onDrop: (target) => bool,   return true if the drop was accepted
 //     onPickup: () => {},         optional
+//     onEnd: () => {},            optional: after any drag, dropped or not
 //   })
 //
 // Small movements (8 px or less) are taps: the normal click event fires.
@@ -72,6 +73,7 @@ export function enable(el, opts) {
       }
 
       el.style.transition = "";
+      if (opts.onEnd) opts.onEnd();
       const accepted = !cancelled && opts.onDrop ? opts.onDrop(target) === true : false;
       if (!accepted) {
         // glide gently back home

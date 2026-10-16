@@ -4,6 +4,7 @@ import { seeded } from "../helpers.mjs";
 import { MOODS, STORIES, LEVELS, storiesFor, choicesFor, question } from "../../js/logic/feelings.js";
 
 test("every story names its character and asks about them", () => {
+  assert.equal(new Set(STORIES.map((s) => s.id)).size, STORIES.length, "ids are unique");
   for (const s of STORIES) {
     assert.ok(["boy", "girl"].includes(s.who), s.text);
     assert.ok(s.text.includes(s.who), `"${s.text}" should name the ${s.who}`);
@@ -13,12 +14,6 @@ test("every story names its character and asks about them", () => {
       assert.ok(MOODS.includes(ok) && ok !== s.answer, s.text);
     }
   }
-});
-
-test("no scene shows a feeling (faces, broken hearts, crosses, party poppers)", () => {
-  // the Emoticons block is all faces; the rest are feeling cues
-  const cue = /[\u{1F600}-\u{1F64F}\u{1F910}-\u{1F92F}\u{1F970}-\u{1F97A}\u{1F494}\u{1F49D}\u{2764}\u{274C}\u{1F6AB}\u{1F645}\u{1F389}]/u;
-  for (const s of STORIES) assert.ok(!cue.test(s.scene), `${s.text}: ${s.scene}`);
 });
 
 test("each level has at least three stories for every feeling in play", () => {

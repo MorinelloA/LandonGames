@@ -15,7 +15,7 @@ const backBtn = document.getElementById("photo-back");
 const puzzle = createPuzzle({
   boardEl: document.getElementById("photo-board"),
   trayEl: document.getElementById("photo-tray"),
-  levelEl: document.getElementById("photo-level"),
+  levelEl: document.getElementById("title-badge"),
   storageKey: "landon-photo-level",
   onComplete: () => showPicker(), // back to the photo gallery after each win
 });

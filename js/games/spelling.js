@@ -14,7 +14,7 @@ const pictureEl = document.getElementById("spell-picture");
 const slotsEl = document.getElementById("spell-slots");
 const lettersEl = document.getElementById("spell-letters");
 const hearBtn = document.getElementById("spell-hear");
-const levelEl = document.getElementById("spell-level");
+const levelEl = document.getElementById("title-badge");
 
 const level = createLevel({ key: "landon-word-level", max: LEVELS.length });
 let cleanStreak = 0; // words finished without any mistakes

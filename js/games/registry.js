@@ -1,5 +1,6 @@
-// Every game, by the name its menu card and screen use (data-game and
-// screen-<name> in index.html).
+// Every game in menu order, with the title shown in the top bar. `drawn`
+// marks the games redrawn in the storybook look; they get the cat in the
+// corner. (A game's id is its menu card's data-game and its screen-<id>.)
 import mathpop from "./mathpop.js";
 import spelling from "./spelling.js";
 import memory from "./memory.js";
@@ -7,13 +8,25 @@ import simon from "./simon.js";
 import counting from "./counting.js";
 import music from "./music.js";
 import puzzle from "./puzzle.js";
-import photopuzzle from "./photopuzzle.js";
 import maze from "./maze.js";
+import photopuzzle from "./photopuzzle.js";
 import sortit from "./sortit.js";
 import feelings from "./feelings.js";
 import trace from "./trace.js";
 
-export const GAMES = {
-  mathpop, spelling, memory, simon, counting, music,
-  puzzle, photopuzzle, maze, sortit, feelings, trace,
-};
+export const GAME_LIST = [
+  { id: "mathpop", title: "Math Bubbles", game: mathpop },
+  { id: "spelling", title: "Word Builder", game: spelling },
+  { id: "memory", title: "Animal Match", game: memory },
+  { id: "simon", title: "Copy Cat", game: simon },
+  { id: "counting", title: "Counting Time", game: counting },
+  { id: "music", title: "Music Maker", game: music },
+  { id: "puzzle", title: "Puzzle Builder", game: puzzle },
+  { id: "maze", title: "Cheese Maze", game: maze },
+  { id: "photopuzzle", title: "Picture Puzzle", game: photopuzzle },
+  { id: "sortit", title: "Sort It!", game: sortit },
+  { id: "feelings", title: "Feelings", game: feelings, drawn: true },
+  { id: "trace", title: "Trace It", game: trace },
+];
+
+export const GAMES = Object.fromEntries(GAME_LIST.map((g) => [g.id, g.game]));

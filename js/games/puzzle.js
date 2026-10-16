@@ -71,7 +71,7 @@ function makeScene() {
 const puzzle = createPuzzle({
   boardEl: document.getElementById("puzzle-board"),
   trayEl: document.getElementById("puzzle-tray"),
-  levelEl: document.getElementById("puzzle-level"),
+  levelEl: document.getElementById("title-badge"),
   storageKey: "landon-puzzle-level",
   onComplete: () => puzzle.build(makeScene()),
 });

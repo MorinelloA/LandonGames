@@ -9,7 +9,7 @@ import { shuffle } from "../core/rng.js";
 import { LETTERS, LOWERCASE, DIGITS, subdivide, makeCutLine } from "../logic/trace.js";
 
 const stage = document.getElementById("trace-stage");
-const labelEl = document.getElementById("trace-label");
+const labelEl = document.getElementById("title-badge");
 const modeBtns = /** @type {HTMLElement[]} */ ([...document.querySelectorAll(".trace-mode-btn")]);
 
 const STROKE_COLORS = ["#ff8a8a", "#7ec8e3", "#90d4a3", "#c9a7eb"];

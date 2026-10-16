@@ -4,37 +4,36 @@
 import { shuffle } from "../core/rng.js";
 
 export const MOODS = ["happy", "sad", "angry", "scared"];
-export const FACES = { happy: "😊", sad: "😢", angry: "😠", scared: "😨" };
 
-// `who` sets the pronoun in the question, and every story names its
-// character. `alsoOk` feelings are a fair answer too (a knocked-down tower
-// can make you sad, not just angry), so they're never offered as the wrong
-// choice. Scenes show what happened, never how anyone feels.
+// `id` names the story's picture in js/art/scenes.js. `who` sets the
+// pronoun in the question, and every story names its character. `alsoOk`
+// feelings are a fair answer too (a knocked-down tower can make you sad,
+// not just angry), so they're never offered as the wrong choice.
 export const STORIES = [
-  { who: "boy", scene: "👦🍦⬇️", text: "The boy dropped his ice cream.", answer: "sad" },
-  { who: "girl", scene: "👧🎂🎈", text: "It is the girl's birthday party!", answer: "happy" },
-  { who: "boy", scene: "👦🎁", text: "The boy got a new toy!", answer: "happy" },
-  { who: "girl", scene: "👧🧸", text: "The girl's teddy bear ripped.", answer: "sad" },
-  { who: "boy", scene: "👦🐶", text: "The boy is playing with his puppy!", answer: "happy" },
-  { who: "girl", scene: "👧🌧️⚽", text: "It is raining, so the girl can't play outside.", answer: "sad", alsoOk: ["angry"] },
-  { who: "boy", scene: "👦🍕", text: "The boy is eating his favorite pizza!", answer: "happy" },
-  { who: "girl", scene: "👧🎈💨", text: "The girl's balloon flew away.", answer: "sad" },
-  { who: "boy", scene: "👦🏊", text: "The boy gets to go swimming today!", answer: "happy" },
-  { who: "girl", scene: "👧🍪", text: "The girl's cookies are all gone.", answer: "sad" },
-  { who: "boy", scene: "👦🚂", text: "The boy is going on a train ride!", answer: "happy" },
-  { who: "girl", scene: "👧🩹", text: "The girl fell down and hurt her knee.", answer: "sad" },
-  { who: "boy", scene: "👦🧱💥", text: "Someone knocked down the boy's tower.", answer: "angry", alsoOk: ["sad"] },
-  { who: "girl", scene: "👧🍭👦", text: "Her brother took the girl's candy.", answer: "angry", alsoOk: ["sad"] },
-  { who: "boy", scene: "👦🧸🧺", text: "The boy has to stop playing and clean up.", answer: "angry", alsoOk: ["sad"] },
-  { who: "girl", scene: "👧📕✏️", text: "Someone scribbled in the girl's book.", answer: "angry", alsoOk: ["sad"] },
-  { who: "boy", scene: "👦🐕📢", text: "A big dog barked at the boy.", answer: "scared" },
-  { who: "girl", scene: "👧⛈️", text: "The girl hears very loud thunder.", answer: "scared" },
-  { who: "boy", scene: "👦🌑", text: "The lights went out, and the boy is in the dark.", answer: "scared" },
-  { who: "girl", scene: "👧🕷️", text: "A big spider ran by the girl.", answer: "scared" },
-  { who: "boy", scene: "👦🏆", text: "The boy won the race!", answer: "happy" },
-  { who: "girl", scene: "👧👵", text: "Grandma came to visit the girl!", answer: "happy" },
-  { who: "boy", scene: "👦🎮🔌", text: "The boy's game turned off before he saved.", answer: "angry", alsoOk: ["sad"] },
-  { who: "girl", scene: "👧🛝", text: "The girl is going to the playground!", answer: "happy" },
+  { id: "ice-cream", who: "boy", text: "The boy dropped his ice cream.", answer: "sad" },
+  { id: "birthday", who: "girl", text: "It is the girl's birthday party!", answer: "happy" },
+  { id: "new-toy", who: "boy", text: "The boy got a new toy!", answer: "happy" },
+  { id: "teddy", who: "girl", text: "The girl's teddy bear ripped.", answer: "sad" },
+  { id: "puppy", who: "boy", text: "The boy is playing with his puppy!", answer: "happy" },
+  { id: "rain", who: "girl", text: "It is raining, so the girl can't play outside.", answer: "sad", alsoOk: ["angry"] },
+  { id: "pizza", who: "boy", text: "The boy is eating his favorite pizza!", answer: "happy" },
+  { id: "balloon", who: "girl", text: "The girl's balloon flew away.", answer: "sad" },
+  { id: "swimming", who: "boy", text: "The boy gets to go swimming today!", answer: "happy" },
+  { id: "cookies", who: "girl", text: "The girl's cookies are all gone.", answer: "sad" },
+  { id: "train", who: "boy", text: "The boy is going on a train ride!", answer: "happy" },
+  { id: "knee", who: "girl", text: "The girl fell down and hurt her knee.", answer: "sad" },
+  { id: "tower", who: "boy", text: "Someone knocked down the boy's tower.", answer: "angry", alsoOk: ["sad"] },
+  { id: "candy", who: "girl", text: "Her brother took the girl's candy.", answer: "angry", alsoOk: ["sad"] },
+  { id: "clean-up", who: "boy", text: "The boy has to stop playing and clean up.", answer: "angry", alsoOk: ["sad"] },
+  { id: "scribble", who: "girl", text: "Someone scribbled in the girl's book.", answer: "angry", alsoOk: ["sad"] },
+  { id: "dog-bark", who: "boy", text: "A big dog barked at the boy.", answer: "scared" },
+  { id: "thunder", who: "girl", text: "The girl hears very loud thunder.", answer: "scared" },
+  { id: "dark", who: "boy", text: "The lights went out, and the boy is in the dark.", answer: "scared" },
+  { id: "spider", who: "girl", text: "A big spider ran by the girl.", answer: "scared" },
+  { id: "race", who: "boy", text: "The boy won the race!", answer: "happy" },
+  { id: "grandma", who: "girl", text: "Grandma came to visit the girl!", answer: "happy" },
+  { id: "game-off", who: "boy", text: "The boy's game turned off before he saved.", answer: "angry", alsoOk: ["sad"] },
+  { id: "playground", who: "girl", text: "The girl is going to the playground!", answer: "happy" },
 ];
 
 // which feelings are in play, and how many face choices are shown

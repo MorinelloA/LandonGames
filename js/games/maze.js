@@ -7,7 +7,7 @@ import { createLevel } from "../core/levels.js";
 import { SIZES, generate, canStep, solve } from "../logic/maze.js";
 
 const board = document.getElementById("maze-board");
-const levelEl = document.getElementById("maze-level");
+const levelEl = document.getElementById("title-badge");
 
 const level = createLevel({ key: "landon-maze-level", max: SIZES.length });
 
@@ -102,10 +102,11 @@ function moveToward(cx, cy) {
   }
 }
 
+// the board may be scaled on screen, so measure cells from its drawn size
 function pointerCell(e) {
   const r = board.getBoundingClientRect();
-  const x = Math.floor((e.clientX - r.left) / cellSize);
-  const y = Math.floor((e.clientY - r.top) / cellSize);
+  const x = Math.floor(((e.clientX - r.left) / r.width) * W);
+  const y = Math.floor(((e.clientY - r.top) / r.height) * H);
   if (x < 0 || y < 0 || x >= W || y >= H) return null;
   return [x, y];
 }

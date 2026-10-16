@@ -12,7 +12,7 @@ import { MAX_LEVEL, LEVEL_UP_STREAK, LEVEL_DOWN_MISSES, STAR_EVERY, generate, ch
 
 const problemEl = document.getElementById("math-problem");
 const area = document.getElementById("bubble-area");
-const levelEl = document.getElementById("math-level");
+const levelEl = document.getElementById("title-badge");
 const COLORS = ["#7ec8e3", "#f9a8c2", "#90d4a3", "#c9a7eb", "#ffb347"];
 
 const level = createLevel({ key: "landon-math-level", max: MAX_LEVEL });
