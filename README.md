@@ -1,105 +1,122 @@
 # Landon's Game Room
 
-A website of educational games designed for an iPad. Everything is plain HTML/CSS/JavaScript —
-no build step, no dependencies, and all sounds are generated in the browser (no audio files).
+Twelve games for an iPad, each tied to one of Landon's IEP goals. It's plain HTML, CSS and JavaScript modules with no build step. All sound is synthesized in the browser, every picture is drawn in code or vendored, and it plays offline once installed to the Home Screen. It lives at <https://landonarcher.com/games/>.
 
 ## The games
 
 | Game | What it teaches |
 |---|---|
-| 🫧 Math Bubbles | Addition, subtraction & (at high levels) multiplication — drag the answer bubble into the equation. Levels 1–6 adapt automatically: four right in a row levels up, two misses in a row levels down. |
-| 🔤 Word Builder | Spelling & reading — drag letters into their slots; the iPad speaks each word aloud. Levels 1–7 adapt: words grow from 3 to 6 letters and decoy letters appear; three perfect words levels up, a struggle levels down. |
-| 🐾 Animal Match | Memory & focus — classic pairs game; each animal says its name when flipped |
-| 🐱 Copy Cat | Working memory & attention — repeat the growing sound-and-light pattern (forgiving: mistakes just replay the pattern, never "game over") |
-| 🐟 Counting Time | Counting & numbers — drag each item into the basket to count it out loud, then pick the total |
-| 🎹 Music Maker | Music & pattern following — free-play xylophone plus follow-the-glowing-bar songs |
-| 🧩 Puzzle Builder | Spatial reasoning — drag puzzle pieces to rebuild a busy emoji scene. The grid grows 2×2 → 6×6 after clean solves and shrinks back after hard ones. No freeze on wrong drops: puzzling is trial and error. |
-| 🖼️ Picture Puzzle | Same puzzle game, but the pictures are your own family photos from the site's `photos/` folder (see below) — same photos on every device. |
-| 🧀 Cheese Maze | Planning & problem solving — drag the mouse through the maze to the cheese. Each win unlocks a bigger maze (6 levels). |
-| 🗂️ Sort It! | *IEP speech goal* — identify vocabulary by **feature** ("which one is cold?"), **function** ("which one cuts?"), and **class** ("find the animal") from a field of 3, spoken aloud; drag the right one into the bin. |
-| 😊 Feelings | *IEP ELA goal* — hear a little story ("The boy dropped his ice cream"), then drag the right feeling face onto the scene. Level 1 is happy/sad (field of 2); levels 2–3 add angry and scared (field of 3). |
-| ✏️ Trace It | *IEP OT goals* — finger-trace capital letters (🔠 ABC), lowercase letters (🔡 abc), and numbers 0–9 (🔢 123) dot-to-dot in proper stroke order, plus a ✂️ Cut mode for dragging scissors along a wavy line. Never freezes — motor practice is trial and error. |
+| Math Bubbles | Addition, subtraction and, at the top level, multiplication: drag the bubble with the answer into the sum, under the sea. Levels 1 to 4 follow the IEP math goal (2 answer choices with sums within 10, up to 3 choices within 20); 5 and 6 are room to grow. Four right in a row levels up, two misses ease back down. |
+| Word Builder | Spelling and reading: drag the letter blocks into the slots; the iPad says the word. Words grow from 3 to 6 letters, and decoy letters join at the top levels. |
+| Animal Match | Memory: the pairs game; each animal says its name when flipped. |
+| Copy Cat | Working memory: the cat plays a growing pattern on four pads (each its own colour and shape), then it's his turn. A mistake just replays the pattern. |
+| Counting Time | Counting: drag each thing into the basket to count it aloud, then pick how many. The numbers appear once everything is counted. |
+| Music Maker | Music: a xylophone to play freely, plus follow-the-glowing-bar songs. |
+| Puzzle Builder | Spatial reasoning: a jigsaw of a busy scene. The grid grows from 2x2 to 6x6 after clean solves and shrinks after hard ones. |
+| Picture Puzzle | The same jigsaw on family photos, picked from a photo wall (see "Family photos"). |
+| Cheese Maze | Planning: drag the mouse through the garden maze to the cheese. Each win unlocks a bigger maze. |
+| Sort It! | IEP speech goal: find things by class ("Find the animal"), function ("Which one cuts?") and feature ("Which one is cold?") from a field of 3, spoken aloud, and drag the right one into the bin. No wrong choice is ever also right. |
+| Feelings | IEP ELA goal: hear a little story, see it drawn with the character's face neutral, and drag the face that shows how they feel onto the story. Level 1 is happy or sad; level 2 adds angry, level 3 adds scared. |
+| Trace It | IEP OT goals: trace capitals, little letters and numbers dot to dot in school stroke order on handwriting lines, or cut along a wavy line. |
 
-Tapping still works everywhere as a fallback, but dragging is the primary way to play.
-Stars earned in every game accumulate in the top-right corner and are saved on the device,
-along with each game's difficulty level.
-
-**🖐️ Help button** — visible in every game. Tapping it speaks *"Help please"* out loud
-(modeling his AAC 2-word requesting goal) and gives a genuine hint: the right bubble glows,
-the next letter glows, the maze lights the next few steps, Copy Cat replays its pattern, etc.
-Asking for help is always free — never a freeze, never a penalty — so requesting help is
-consistently a better strategy than getting frustrated.
-
-**Math Bubbles and the IEP** — levels 1–4 follow his math goal exactly (2 answer choices
-with sums within 10, up to 3 choices with sums/differences within 20). Levels 5–6 stay
-available above that as room to grow.
+Stars earned in every game add up in the top-right corner. Stars and each game's level are saved on the device.
 
 ## Design notes
 
-- **Sounds are the reward.** Correct answers earn pops, chimes, cheers, and spoken praise. Wrong answers earn *silence* and a quiet ~3-second freeze (a plain ⏳ overlay blocks all input) — a mild inconvenience with zero entertainment value, then play resumes exactly where it was. There is never a buzzer, a game over, or time pressure.
-  - Exception: flipping non-matching pairs in Animal Match doesn't freeze (that's how a memory game is played, not a mistake) — it's just a silent flip-back.
-- Big touch targets, high contrast, calm pastel palette, no flashing effects.
-- Respects the iPad's "Reduce Motion" accessibility setting.
-- The 🎵 button in the top-right toggles gentle background music (off by default).
+- **Sounds are the reward.** Right answers earn pops, chimes and spoken praise. Wrong answers earn silence and a quiet three-second pause (a still hourglass); there's never a buzzer, a game over or time pressure. Puzzles, tracing and Animal Match never pause: trial and error is how they're played.
+- **Help** is in every game. It says "Help please" out loud (modelling his AAC two-word request), and the game gives a real hint while the cat points to it. Asking is never penalized.
+- **The cat** waves on the menu, cheers right answers and points during hints. It never reacts to a mistake.
+- **Calm and clear:** big touch targets, warm flat colours, no flashing. Reduce Motion turns off the confetti, bobbing and flying star.
+- Drag is the main way to play; tapping works too.
+- The music button in the top-right plays gentle background music (off by default).
 
-## Adding family photos for Picture Puzzle
+## Run it
 
-1. Put the original photos in `photos-src/` (any names; `.jpg`, `.png`, `.webp` and
-   iPhone `.heic` all work). That folder is git-ignored, so the originals never
-   reach the site or the repo.
-2. Double-click `tools/photos.bat` (or run `python tools/photos.py`). It needs Pillow,
-   plus `pillow-heif` for HEIC: `pip install pillow pillow-heif`.
-3. Commit and publish the site.
+Any static server works, but `tools/devserver.py` sends no-cache headers (so edits show on reload) and the right types for JavaScript modules:
 
-The tool writes small JPEGs (longest side 1600 px, no location or camera data),
-320 px thumbnails for the gallery, and `photos/manifest.json`. Each puzzle is a
-square cut from the photo: the middle of landscape photos, a little above the
-middle of portrait ones. If a square misses someone's face, list the photo in
-`tools/photo-focus.json` with where the square should centre (x and y as
-fractions, e.g. `"IMG_8210": [0.5, 0.59]`) and run the tool again.
+```bash
+python tools/devserver.py 8642
+```
 
-The photos can be opened by anyone who knows their address, so only add ones
-you're happy to have on the web.
+Then open <http://localhost:8642/>. To try it on an iPad on the same network, add `--lan` and open the address it prints. Offline play only runs on the real site, or locally with `?sw` (unregister it afterwards, or it will keep serving the old files).
 
-## Putting it on the iPad
+## Test it
 
-The easiest free option is **Netlify Drop**:
+Node 22 or later; nothing to install.
 
-1. Go to https://app.netlify.com/drop
-2. Drag the whole `LandonGames` folder onto the page
-3. It gives you a link — open that link in Safari on the iPad
+```bash
+node --test "tests/**/*.test.mjs"
+```
 
-Then on the iPad, make it feel like a real app:
+The tests check the games' rules against the IEP levels (math ranges, one right answer in Sort It, Feelings stories, maze and tracing data, jigsaw cuts), that every picture is well-formed SVG, that the CSS colours match `js/art/theme.js`, that no emoji are left in the page or code, and that everything ships: the service worker's file list, the page's links and the photo sizes.
 
-1. Open the link in Safari
-2. Tap the Share button → **Add to Home Screen**
-3. It gets its own icon (the gold star) and opens full-screen with no browser bars
+Type checks run in editors through `jsconfig.json`, capped at ES2021 so APIs newer than Safari 15 show up as errors. From the command line:
 
-(GitHub Pages works just as well if you prefer: push this folder to a repo and enable Pages.)
+```bash
+npx -p typescript tsc -p jsconfig.json
+```
+
+`tools/art-sheet.html` shows every piece of art on one page: the cat, every face and pose, the places, the 24 Feelings scenes, the menu cards, bins and pads. `docs/ipad-checklist.md` lists what only a real iPad can show.
+
+## Deploy it
+
+1. Restamp the service worker. It keeps every file under a version made from their contents, so any change gets installed fresh:
+
+   ```bash
+   node tools/stamp-sw.mjs
+   ```
+
+   `node tools/stamp-sw.mjs --check` fails if you forgot, and so does the ship test.
+
+2. Commit. The site build copies this folder as it is, so uncommitted changes would be published too (the build warns when there are any).
+
+3. Publish from `C:\Repos\LandonArcher\cloudflare` with `npm run deploy`. Its `build.mjs` copies `index.html`, `sw.js`, `manifest.webmanifest` and the `css`, `js`, `fonts`, `vendor`, `icons` and `photos` folders to `/games/`, checks the stamp, and asks search engines not to index the photos. Then run `check-site.ps1` there.
+
+The minimum is iPadOS 15 (Safari 15). Games lay out on a 1133 x 640 stage (iPad mini landscape, under the top bar), scaled to fit any screen.
+
+## Family photos
+
+1. Put the original photos in `photos-src/` (any names; `.jpg`, `.png`, `.webp` and iPhone `.heic` all work). That folder is git-ignored, so the originals never reach the site or the repo.
+2. Double-click `tools/photos.bat` (or run `python tools/photos.py`). It needs Pillow, plus `pillow-heif` for HEIC: `pip install pillow pillow-heif`.
+3. Restamp, commit and publish as above.
+
+The tool writes small JPEGs (longest side 1600 px, no location or camera data), 320 px thumbnails for the photo wall, and `photos/manifest.json`. Each puzzle is a square cut from the photo: the middle of landscape photos, a little above the middle of portrait ones. If a square misses someone's face, list the photo in `tools/photo-focus.json` with where the square should centre (x and y as fractions, for example `"IMG_8210": [0.5, 0.59]`) and run the tool again.
+
+The photos can be opened by anyone who knows their address (they're kept out of search results), so only add ones you're happy to have on the web.
+
+## How it fits together
+
+| Path | What's there |
+|---|---|
+| `js/main.js` | starts the app and registers the service worker |
+| `js/core/` | the shell: navigation, the stage, sound and speech, drag and drop, stars and celebrations, the quiet pause, per-visit timers, levels, the cat in the corner |
+| `js/logic/` | each game's rules and data, with no DOM, so the tests can run them |
+| `js/games/` | one controller per game; `registry.js` lists them in menu order |
+| `js/art/` | the storybook look, drawn as SVG in code: `theme.js` (colours), `people.js` (the story characters), `mascot.js` (the cat), `backdrops.js` (places), `scenes.js` (the Feelings stories), `cards.js` (menu cards), `gameart.js`, `props.js`, `jigsaw.js`, `ui.js` (interface icons), `icons.js` (the vocabulary pictures) |
+| `vendor/fluent-emoji-flat/` | the vocabulary pictures, copied by `tools/vendor-icons.mjs` |
+| `fonts/` | Fredoka |
+| `css/style.css` | the page's styles; its colours mirror `js/art/theme.js` |
+| `sw.js`, `tools/stamp-sw.mjs` | offline play |
+| `tools/photos.py` | the photo pipeline |
+
+The vocabulary pictures are Microsoft's Fluent Emoji in the Flat style. To add one, give it a name and its emoji in `js/art/icons.js`, then copy it in from a local checkout of [fluentui-emoji](https://github.com/microsoft/fluentui-emoji) (the steps are at the top of the tool):
+
+```bash
+node tools/vendor-icons.mjs <path to the fluentui-emoji checkout>
+```
+
+`node tools/vendor-icons.mjs --check` confirms every icon in the table is there.
 
 ## The app icon
 
-The home screen icon lives in `icons/` and is already committed — nothing to do
-unless you want to change how it looks. iOS caches it hard, so if you ever swap it,
-delete the home screen shortcut and re-add it to see the new one.
-
-To change the art, edit the palette constants at the top of `tools/make-icons.py`
-and re-run it (needs `pip install pillow numpy` — the site itself still has no
-dependencies), then commit the regenerated PNGs:
+The Home Screen icon (a gold star) lives in `icons/`. To change it, edit the palette at the top of `tools/make-icons.py` and run it (needs `pip install pillow numpy`), then commit the PNGs:
 
 ```bash
 python tools/make-icons.py --preview
 ```
 
-`--preview` also writes `tools/preview.png`, showing the icon at every size with
-iOS's rounded-square mask applied.
+iOS caches the icon hard: delete the Home Screen shortcut and add it again to see a new one.
 
-## Testing on a computer
+## Licences
 
-Any static file server works, e.g.:
-
-```bash
-python -m http.server 8642
-```
-
-Then open http://localhost:8642
+The vocabulary pictures are Fluent Emoji, © Microsoft, MIT licence (`vendor/fluent-emoji-flat/LICENSE`). Fredoka is under the SIL Open Font License (`fonts/OFL.txt`).
