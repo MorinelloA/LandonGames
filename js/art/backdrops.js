@@ -228,6 +228,7 @@ export const PLACES = {
   track: () => outdoors({ trees: [[-40, 1], [700, 0.9]], flowers: false, extra: raceTrack() }),
   bark: () => outdoors({ trees: [[60, 1.1], [690, 0.9]], extra: fence(470) }),
   playroom: () => room({ window: "day" }),
+  music: () => room({ wall: "#ECE6FA", floor: "#DDB088", window: "day", windowX: -230, shelfAt: null, rugColor: "#B9A7E8" }),
   party: () => room({ wall: "#FCE3EC", party: true, window: "day", shelfAt: null }),
   bedroom: () => room({ wall: "#E4E9FB", floor: "#D9B48C", window: "day", rugColor: "#9BB7EE", extra: bed(470, 452) , shelfAt: null }),
   kitchen: () => room({ wall: "#FFF0CC", floor: "#E9D7B9", window: "day", windowX: 90, shelfAt: null, extra: counter(400, 452) }),

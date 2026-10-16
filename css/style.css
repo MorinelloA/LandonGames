@@ -759,6 +759,214 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
 .count-answer:active { transform: scale(0.94); }
 .count-answer.wrong { animation: shake 0.4s; }
 
+/* ===== Trace It ===== */
+#trace-modes {
+  position: absolute;
+  left: 36px;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trace-mode-btn { width: 170px; justify-content: center; font-size: 30px; }
+
+#trace-stage {
+  position: absolute;
+  left: 262px;
+  top: 6px;
+  width: 610px;
+  height: 610px;
+  touch-action: none;
+}
+
+#trace-stage svg { width: 100%; height: 100%; overflow: visible; }
+
+.trace-target { transform-box: fill-box; transform-origin: center; animation: dotPulse 0.9s ease-in-out infinite; }
+.trace-target.hint { animation: dotPulseBig 0.5s ease-in-out infinite; }
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@keyframes dotPulseBig {
+  0%, 100% { transform: scale(1.2); }
+  50% { transform: scale(2); }
+}
+
+/* ===== Copy Cat ===== */
+#simon-cat {
+  position: absolute;
+  left: 60px;
+  top: 236px;
+  width: 300px;
+  height: 330px;
+}
+
+#simon-cat .cat-art { width: 300px; height: 330px; }
+
+#simon-says {
+  position: absolute;
+  left: 92px;
+  top: 108px;
+  max-width: 330px;
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+#simon-says::before {
+  left: 60px;
+  bottom: -20px;
+  border: 12px solid transparent;
+  border-top: 20px solid var(--cream);
+  border-bottom: 0;
+}
+
+#simon-pads {
+  position: absolute;
+  left: 470px;
+  top: 34px;
+  display: grid;
+  grid-template-columns: repeat(2, 236px);
+  gap: 26px;
+}
+
+.simon-pad {
+  height: 200px;
+  border-radius: 34px;
+  background: var(--soft);
+  box-shadow: 0 8px 0 var(--deep);
+  display: grid;
+  place-items: center;
+  transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
+}
+
+.simon-pad .pad-art { width: 112px; height: 112px; opacity: 0.85; }
+.simon-pad.lit, .simon-pad:active { background: var(--c); transform: scale(1.05); box-shadow: 0 8px 0 var(--deep), 0 0 34px 10px var(--glow-c); }
+.simon-pad.lit .pad-art { opacity: 1; }
+#simon-pads.locked .simon-pad { pointer-events: none; }
+
+#simon-start {
+  position: absolute;
+  left: 617px;
+  top: 516px;
+  width: 210px;
+  justify-content: center;
+}
+
+/* ===== Music Maker ===== */
+#xylo-frame {
+  position: absolute;
+  left: 92px;
+  top: 30px;
+  width: 900px;
+  height: 440px;
+  pointer-events: none;
+}
+
+#xylo-frame svg { width: 900px; height: 440px; }
+
+#xylophone {
+  position: absolute;
+  left: 120px;
+  top: 30px;
+  width: 844px;
+  height: 440px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.xylo-bar {
+  position: relative;
+  width: 90px;
+  height: var(--h);
+  border-radius: 18px;
+  background: var(--c);
+  box-shadow: inset 0 -12px 0 var(--deep), inset 0 10px 0 rgba(255, 255, 255, 0.28);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 16px;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink-c);
+  transition: transform 0.1s;
+}
+
+.xylo-bar::before, .xylo-bar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: #E8DCC8;
+  box-shadow: inset 0 0 0 3px #C9B79C;
+}
+
+.xylo-bar::before { top: 18%; }
+.xylo-bar::after { top: 68%; }
+.xylo-bar.playing, .xylo-bar:active { transform: translateY(4px) scale(0.98); }
+.xylo-bar.next-note { animation: nextPulse 0.9s ease-in-out infinite; }
+
+@keyframes nextPulse {
+  0%, 100% { box-shadow: inset 0 -12px 0 var(--deep), inset 0 10px 0 rgba(255, 255, 255, 0.28), 0 0 0 0 var(--glow); }
+  50% { box-shadow: inset 0 -12px 0 var(--deep), inset 0 10px 0 rgba(255, 255, 255, 0.28), 0 0 30px 12px var(--glow); }
+}
+
+#mallet {
+  position: absolute;
+  width: 60px;
+  height: 170px;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 30px 160px;
+}
+
+#mallet.strike { animation: strike 0.32s ease-out; }
+
+@keyframes strike {
+  0% { opacity: 1; transform: rotate(-28deg); }
+  45% { opacity: 1; transform: rotate(4deg); }
+  100% { opacity: 0; transform: rotate(-12deg); }
+}
+
+#song-buttons {
+  position: absolute;
+  left: 30px;
+  top: 512px;
+  width: 920px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.song-btn .icon { width: 36px; height: 36px; }
+#song-buttons .btn { font-size: 20px; padding: 0 18px; white-space: nowrap; }
+
+/* ===== Cheese Maze ===== */
+#maze-board {
+  position: absolute;
+  touch-action: none;
+}
+
+#maze-board svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+#maze-mouse, #maze-cheese {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+#maze-mouse { transition: transform 0.12s linear; }
+#maze-mouse.win .icon { animation: hop 0.5s ease-out 3; }
+.maze-hint-dot { transform-box: fill-box; transform-origin: center; animation: dotPulse 0.8s ease-in-out infinite; }
+
 /* ===== The cat buddy (in every redrawn game) ===== */
 #buddy {
   position: absolute;
@@ -883,6 +1091,11 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
 @media (prefers-reduced-motion: reduce) {
   .confetti { display: none; }
   .bubble-inner { animation: none; }
+  .trace-target, .trace-target.hint { animation: none; }
+  .xylo-bar.next-note { animation: none; box-shadow: 0 0 0 8px var(--glow); }
+  #mallet.strike { animation: none; }
+  #maze-mouse { transition: none; }
+  .maze-hint-dot, #maze-mouse.win .icon { animation: none; }
   .cheer-card { animation: cheerFade 1.6s ease forwards; }
   #buddy.cheer .cat-art { animation: none; }
   #rotate-overlay .ico { animation: none; transform: rotate(0deg); }

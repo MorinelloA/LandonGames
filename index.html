@@ -66,16 +66,17 @@
     </section>
 
     <!-- ============ COPY CAT ============ -->
-    <section id="screen-simon" class="screen classic">
-      <div class="game-header"><p id="simon-status" class="game-hint">Watch and listen, then copy the pattern!</p></div>
-      <div id="simon-round" class="round-badge"></div>
+    <section id="screen-simon" class="screen">
+      <div class="backdrop"></div>
+      <div id="simon-cat"></div>
+      <div id="simon-says" class="says"></div>
       <div id="simon-pads">
-        <button class="simon-pad" data-pad="0" style="--pad-color:#ff8a8a">🔴</button>
-        <button class="simon-pad" data-pad="1" style="--pad-color:#ffd966">🟡</button>
-        <button class="simon-pad" data-pad="2" style="--pad-color:#90d4a3">🟢</button>
-        <button class="simon-pad" data-pad="3" style="--pad-color:#7ec8e3">🔵</button>
+        <button class="simon-pad" data-pad="0" aria-label="red circle"></button>
+        <button class="simon-pad" data-pad="1" aria-label="yellow star"></button>
+        <button class="simon-pad" data-pad="2" aria-label="green triangle"></button>
+        <button class="simon-pad" data-pad="3" aria-label="blue square"></button>
       </div>
-      <button id="simon-start" class="chunky-btn">▶️ Start</button>
+      <button id="simon-start" class="btn" data-icon="play">Start</button>
     </section>
 
     <!-- ============ COUNTING TIME ============ -->
@@ -114,8 +115,8 @@
     </section>
 
     <!-- ============ CHEESE MAZE ============ -->
-    <section id="screen-maze" class="screen classic">
-      <div class="game-header"><p class="game-hint">Drag the mouse through the maze to the cheese!</p></div>
+    <section id="screen-maze" class="screen">
+      <div class="backdrop"></div>
       <div id="maze-board"></div>
     </section>
 
@@ -131,26 +132,28 @@
     </section>
 
     <!-- ============ TRACE IT ============ -->
-    <section id="screen-trace" class="screen classic">
-      <div class="game-header"><p class="game-hint">Follow the glowing dot with your finger!</p></div>
-      <div id="trace-stage"></div>
+    <section id="screen-trace" class="screen">
+      <div class="backdrop"></div>
       <div id="trace-modes">
-        <button class="chunky-btn small trace-mode-btn" data-mode="abc">🔠 ABC</button>
-        <button class="chunky-btn small trace-mode-btn" data-mode="lower">🔡 abc</button>
-        <button class="chunky-btn small trace-mode-btn" data-mode="num">🔢 123</button>
-        <button class="chunky-btn small trace-mode-btn" data-mode="cut">✂️ Cut</button>
+        <button class="btn trace-mode-btn" data-mode="abc">ABC</button>
+        <button class="btn trace-mode-btn" data-mode="lower">abc</button>
+        <button class="btn trace-mode-btn" data-mode="num">123</button>
+        <button class="btn trace-mode-btn" data-mode="cut" data-icon="scissors">Cut</button>
       </div>
+      <div id="trace-stage"></div>
     </section>
 
     <!-- ============ MUSIC MAKER ============ -->
-    <section id="screen-music" class="screen classic">
-      <div class="game-header"><p id="music-hint" class="game-hint">Tap the bars to make music!</p></div>
+    <section id="screen-music" class="screen">
+      <div class="backdrop"></div>
+      <div id="xylo-frame"></div>
       <div id="xylophone"></div>
+      <div id="mallet"></div>
       <div id="song-buttons">
-        <button class="chunky-btn small song-btn" data-song="twinkle">✨ Twinkle Twinkle</button>
-        <button class="chunky-btn small song-btn" data-song="mary">🐑 Mary's Lamb</button>
-        <button class="chunky-btn small song-btn" data-song="hotcross">🥐 Hot Cross Buns</button>
-        <button id="music-free" class="chunky-btn small">🎨 Free Play</button>
+        <button class="btn song-btn" data-song="twinkle" data-pic="star">Twinkle Twinkle</button>
+        <button class="btn song-btn" data-song="mary" data-pic="sheep">Mary's Lamb</button>
+        <button class="btn song-btn" data-song="hotcross" data-pic="bread">Hot Cross Buns</button>
+        <button id="music-free" class="btn on" data-icon="music">Play Free</button>
       </div>
     </section>
 
