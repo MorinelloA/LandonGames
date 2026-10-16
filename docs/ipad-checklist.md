@@ -18,10 +18,13 @@ Install and offline play (step 9) need the site served over HTTPS, so do that st
 
 1. **Sharp and fitted.** The menu cards, the cat and the story scenes look crisp, not soft. Nothing is cut off at the edges, in Safari and once installed to the Home Screen; the scenery carries on past the games' edges instead of leaving bars.
 2. **The font.** Words are in the rounded Fredoka font, and a and g are written the school way (one loop), not a plain system font.
-3. **Sound and speech.**
+3. **Sound and the narrator.**
+   - Every prompt, story and bit of praise is in the recorded voice (Sarah), never the iPad's built-in one; "Help please" is the younger voice (Liam), and in Music Maker and on the photo wall its hint follows it instead of cutting it off.
    - Right answers pop, chime and speak; wrong answers are silent, with the hourglass pause.
    - In Feelings, each story is heard to the end before "How does he feel?", for every story.
-   - Interrupt it: pull down Control Center and dismiss it, swipe to another app and back. Sounds and speech both come back without reloading.
+   - Word Builder: after a level-up, "Level up!" is heard after "… Great job!". Counting Time: tapping quickly, no number is cut off.
+   - With the music on, the voice is clear over it (the music dips while it talks), and the voice is about as loud as the sound effects.
+   - Interrupt it: pull down Control Center and dismiss it, swipe to another app and back. Sounds and the voice both come back without reloading.
 4. **Dragging.** In Sort It, Word Builder, Math Bubbles, Counting, Feelings and both puzzles, a dragged picture stays under the finger all the way, and lands where it's let go. Pull down Control Center in the middle of a drag: the piece glides back and nothing counts as an answer.
 5. **The cat.** It waves on the menu, cheers a right answer, and points while Help is showing a hint. It never does anything after a wrong answer. In Copy Cat the big cat plays the pattern and the corner cat isn't there.
 6. **Each game once.** Play a round of all twelve: every one shows its scene, Help gives a real hint, and Home then the same game again within a second starts cleanly (no doubled round or speech).

@@ -1,6 +1,6 @@
 # Landon's Game Room
 
-Twelve games for an iPad, each tied to one of Landon's IEP goals. It's plain HTML, CSS and JavaScript modules with no build step. All sound is synthesized in the browser, every picture is drawn in code or vendored, and it plays offline once installed to the Home Screen. It lives at <https://landonarcher.com/games/>.
+Twelve games for an iPad, each tied to one of Landon's IEP goals. It's plain HTML, CSS and JavaScript modules with no build step. Sound effects and music are synthesized in the browser, the narrator is recorded clips (see "The narrator"), every picture is drawn in code or vendored, and it plays offline once installed to the Home Screen. It lives at <https://landonarcher.com/games/>.
 
 ## The games
 
@@ -24,7 +24,8 @@ Stars earned in every game add up in the top-right corner. Stars and each game's
 ## Design notes
 
 - **Sounds are the reward.** Right answers earn pops, chimes and spoken praise. Wrong answers earn silence and a quiet three-second pause (a still hourglass); there's never a buzzer, a game over or time pressure. Puzzles, tracing and Animal Match never pause: trial and error is how they're played.
-- **Help** is in every game. It says "Help please" out loud (modelling his AAC two-word request), and the game gives a real hint while the cat points to it. Asking is never penalized.
+- **Help** is in every game. It says "Help please" out loud in a younger voice than the narrator's (modelling his AAC two-word request), and the game gives a real hint while the cat points to it. Asking is never penalized.
+- **One narrator** (Sarah) reads every prompt, story and bit of praise; "Help please" is Liam. Lines wait their turn, so nothing talks over anything else.
 - **The cat** waves on the menu, cheers right answers and points during hints. It never reacts to a mistake.
 - **Calm and clear:** big touch targets, warm flat colours, no flashing. Reduce Motion turns off the confetti, bobbing and flying star.
 - Drag is the main way to play; tapping works too.
@@ -48,7 +49,7 @@ Node 22 or later; nothing to install.
 node --test "tests/**/*.test.mjs"
 ```
 
-The tests check the games' rules against the IEP levels (math ranges, one right answer in Sort It, Feelings stories, maze and tracing data, jigsaw cuts), that every picture is well-formed SVG, that the CSS colours match `js/art/theme.js`, that no emoji are left in the page or code, and that everything ships: the service worker's file list, the page's links and the photo sizes.
+The tests check the games' rules against the IEP levels (math ranges, one right answer in Sort It, Feelings stories, maze and tracing data, jigsaw cuts), that every picture is well-formed SVG, that the CSS colours match `js/art/theme.js`, that no emoji are left in the page or code, that every line the games say has its recorded clip, and that everything ships: the service worker's file list, the page's links and the photo and clip sizes.
 
 Type checks run in editors through `jsconfig.json`, capped at ES2021 so APIs newer than Safari 15 show up as errors. From the command line:
 
@@ -70,7 +71,7 @@ npx -p typescript tsc -p jsconfig.json
 
 2. Commit. The site build copies this folder as it is, so uncommitted changes would be published too (the build warns when there are any).
 
-3. Publish from `C:\Repos\LandonArcher\cloudflare` with `npm run deploy`. Its `build.mjs` copies `index.html`, `sw.js`, `manifest.webmanifest` and the `css`, `js`, `fonts`, `vendor`, `icons` and `photos` folders to `/games/`, checks the stamp, and asks search engines not to index the photos. Then run `check-site.ps1` there.
+3. Publish from `C:\Repos\LandonArcher\cloudflare` with `npm run deploy`. Its `build.mjs` copies `index.html`, `sw.js`, `manifest.webmanifest` and the `css`, `js`, `fonts`, `vendor`, `icons`, `photos` and `voice` folders to `/games/`, checks the stamp and that every line has its clip, and asks search engines not to index the photos. Then run `check-site.ps1` there.
 
 The minimum is iPadOS 15 (Safari 15). Games lay out on a 1133 x 640 stage (iPad mini landscape, under the top bar), scaled to fit any screen.
 
@@ -84,13 +85,30 @@ The tool writes small JPEGs (longest side 1600 px, no location or camera data), 
 
 The photos can be opened by anyone who knows their address (they're kept out of search results), so only add ones you're happy to have on the web.
 
+## The narrator
+
+Every line the games say is recorded once with ElevenLabs and played from `voice/` through Web Audio, beside the sound effects. That sounds far better than the iPad's built-in voice, and it ends the old tug-of-war between speech and Web Audio over the iPad's audio session. A line without a clip falls back to the built-in voice, and a test fails if any line lacks one.
+
+- `js/logic/lines.js` builds every spoken line from the games' data; the games never speak text built anywhere else. `allLines()` lists all 328.
+- `tools/voice.json` holds the voices (Sarah narrates, Liam says "Help please"), the model (`eleven_multilingual_v2`) and its settings, the same as The Off-Ramp's.
+- `tools/voice.mjs` makes the clips: `build` records any line that's new or changed (each is cached by a hash of its request, so a rerun only pays for what changed), trims the silence, evens out the loudness and writes `voice/<hash>.mp3` and `voice/manifest.json`. Needs ffmpeg. The key comes from `ELEVENLABS_API_KEY`, else from The Off-Ramp's pipeline config, and is never printed.
+
+After changing any spoken line (a new word, story or prompt):
+
+```bash
+node tools/voice.mjs build
+node tools/voice.mjs check
+```
+
+Then restamp, commit `voice/` and publish as above. `node tools/voice.mjs transcribe` runs each clip back through speech-to-text and lists any that don't say their line, and `audition <voice id> …` renders sample lines in other voices to compare. Raw takes, transcripts and the ledger of paid calls stay in `.voice-cache/` (not committed).
+
 ## How it fits together
 
 | Path | What's there |
 |---|---|
 | `js/main.js` | starts the app and registers the service worker |
 | `js/core/` | the shell: navigation, the stage, sound and speech, drag and drop, stars and celebrations, the quiet pause, per-visit timers, levels, the cat in the corner |
-| `js/logic/` | each game's rules and data, with no DOM, so the tests can run them |
+| `js/logic/` | each game's rules and data, with no DOM, so the tests can run them; `lines.js` is everything the games say |
 | `js/games/` | one controller per game; `registry.js` lists them in menu order |
 | `js/art/` | the storybook look, drawn as SVG in code: `theme.js` (colours), `people.js` (the story characters), `mascot.js` (the cat), `backdrops.js` (places), `scenes.js` (the Feelings stories), `cards.js` (menu cards), `gameart.js`, `props.js`, `jigsaw.js`, `ui.js` (interface icons), `icons.js` (the vocabulary pictures) |
 | `vendor/fluent-emoji-flat/` | the vocabulary pictures, copied by `tools/vendor-icons.mjs` |
@@ -98,6 +116,7 @@ The photos can be opened by anyone who knows their address (they're kept out of 
 | `css/style.css` | the page's styles; its colours mirror `js/art/theme.js` |
 | `sw.js`, `tools/stamp-sw.mjs` | offline play |
 | `tools/photos.py` | the photo pipeline |
+| `voice/`, `tools/voice.mjs`, `tools/voice.json` | the narrator's clips and the tool that records them |
 | `tools/app-icon.js`, `tools/make-icons.py` | the Home Screen icon |
 
 The vocabulary pictures are Microsoft's Fluent Emoji in the Flat style. To add one, give it a name and its emoji in `js/art/icons.js`, then copy it in from a local checkout of [fluentui-emoji](https://github.com/microsoft/fluentui-emoji) (the steps are at the top of the tool):
@@ -133,4 +152,4 @@ The screenshots and walkthrough video of the game on tonyt908.com come from `too
 
 ## Licences
 
-The vocabulary pictures are Fluent Emoji, © Microsoft, MIT licence (`vendor/fluent-emoji-flat/LICENSE`). Fredoka is under the SIL Open Font License (`fonts/OFL.txt`).
+The vocabulary pictures are Fluent Emoji, © Microsoft, MIT licence (`vendor/fluent-emoji-flat/LICENSE`). Fredoka is under the SIL Open Font License (`fonts/OFL.txt`). The narrator's clips are generated with ElevenLabs on a paid plan, which allows this use.
