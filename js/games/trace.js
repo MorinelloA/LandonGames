@@ -102,7 +102,7 @@ function buildChar() {
     rules(),
     guides,
     g({ id: "trace-progress" }),
-    startMarks(raw),
+    g({ id: "trace-marks" }, startMarks(raw)),
     circle(0, 0, 4.6, { class: "trace-target", fill: NOTES[1], stroke: "#FFFFFF", strokeWidth: 1.4 }),
     g({ class: "trace-marker" }, mode === "cut" ? scissors() : pencil()),
   ), { viewBox: "-6 -6 112 112" });
@@ -133,6 +133,9 @@ function startStroke() {
   };
   for (const k in attrs) progressLine.setAttribute(k, attrs[k]);
   svgEl.querySelector("#trace-progress").appendChild(progressLine);
+  // this stroke's number on top, where two strokes start together (the top of A)
+  const mark = svgEl.querySelector(`.start-mark[data-stroke="${strokeIdx}"]`);
+  if (mark) mark.parentNode.appendChild(mark);
   pointIdx = 0;
   moveMarkers();
 }
