@@ -3,7 +3,7 @@
 // not a mistake, so it never freezes — the cards just flip back quietly.
 import * as Sound from "../core/sound.js";
 import { later } from "../core/session.js";
-import { awardStars } from "../core/rewards.js";
+import { awardStars, praise } from "../core/rewards.js";
 import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { ANIMALS } from "../logic/memory.js";
@@ -61,7 +61,7 @@ function tapCard(btn, c) {
     later(() => {
       a.classList.add("matched");
       btn.classList.add("matched");
-      Sound.success();
+      praise();
       if (matched === ANIMALS.length) {
         later(() => {
           Sound.fanfare();

@@ -3,7 +3,7 @@
 import * as Sound from "../core/sound.js";
 import * as Drag from "../core/drag.js";
 import { later } from "../core/session.js";
-import { awardStars } from "../core/rewards.js";
+import { awardStars, praise } from "../core/rewards.js";
 import { freeze } from "../core/freeze.js";
 import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
@@ -95,7 +95,7 @@ function resolveGuess(b, v) {
     } else if (solved % STAR_EVERY === 0) {
       awardStars(1);
     } else {
-      Sound.success();
+      praise();
     }
     later(makeProblem, 1000);
   } else {

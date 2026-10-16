@@ -6,7 +6,7 @@
 import * as Sound from "../core/sound.js";
 import * as Drag from "../core/drag.js";
 import { later } from "../core/session.js";
-import { awardStars } from "../core/rewards.js";
+import { awardStars, praise } from "../core/rewards.js";
 import { freeze } from "../core/freeze.js";
 import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
@@ -99,7 +99,7 @@ function resolve(card, feeling) {
       }
     } else {
       cleanStreak = 0;
-      Sound.success();
+      praise();
     }
     current = null;
     later(nextRound, 2400);

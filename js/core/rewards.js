@@ -69,6 +69,12 @@ export function awardStars(n, { celebrate = true, message = null } = {}) {
   }
 }
 
+// A right answer that doesn't earn a star yet: the chime, and the cat cheers.
+export function praise() {
+  Sound.success();
+  Buddy.cheer();
+}
+
 const PRAISE = ["Great job!", "You did it!", "Awesome!", "Way to go!", "Super!", "Amazing!"];
 
 const celebrationEl = document.getElementById("celebration");

@@ -8,7 +8,7 @@
 // 35, baseline at 80, ascenders up to 8 and descenders down to 96.
 import * as Sound from "../core/sound.js";
 import { later } from "../core/session.js";
-import { awardStars } from "../core/rewards.js";
+import { awardStars, praise } from "../core/rewards.js";
 import { shuffle } from "../core/rng.js";
 import { LETTERS, LOWERCASE, DIGITS, subdivide, makeCutLine } from "../logic/trace.js";
 import { backdropSvg } from "../art/backdrops.js";
@@ -187,7 +187,7 @@ function charDone() {
     awardStars(1, { message: "Snip!" });
   } else {
     completedChars++;
-    Sound.success();
+    praise();
     Sound.speak(currentChar() + "! Nice tracing!");
     if (completedChars % 3 === 0) awardStars(1, { message: "Great tracing!" });
     charIdx++;
