@@ -53,9 +53,10 @@ function head(mood) {
   );
 }
 
-// pose: sit | wave | cheer | point | peek;  mood: happy | joy | curious
+// pose: sit | wave | cheer | point | peek | head;  mood: happy | joy | curious
 export function cat({ pose = "sit", mood = "" } = {}) {
   mood = mood || (pose === "cheer" ? "joy" : "happy");
+  if (pose === "head") return head(mood); // just the head, for the app icon
   if (pose === "peek") {
     // just the head and two paws, for peeking over an edge at y = -100
     return g({}, head(mood),
@@ -88,8 +89,7 @@ export function cat({ pose = "sit", mood = "" } = {}) {
 
 // the cat as its own <svg>, `size` units tall; `flip` turns it to face left
 export function catSvg({ pose = "sit", mood = "", size = 120, label = "", flip = false } = {}) {
-  const peek = pose === "peek";
-  const box = peek ? "-80 -240 160 150" : "-115 -240 230 248";
+  const box = pose === "peek" || pose === "head" ? "-80 -240 160 150" : "-115 -240 230 248";
   const [, , bw, bh] = box.split(" ").map(Number);
   const art = flip ? g({ transform: "scale(-1 1)" }, cat({ pose, mood })) : cat({ pose, mood });
   return svg(Math.round((size * bw) / bh), size, art, { viewBox: box, label, cls: "cat-art" });

@@ -6,6 +6,7 @@ import { storyScene } from "../js/art/scenes.js";
 import { STORIES } from "../js/logic/feelings.js";
 import { CARD_GAMES, cardSvg } from "../js/art/cards.js";
 import { binSvg, padSvg } from "../js/art/gameart.js";
+import { appIconSvg } from "./app-icon.js";
 
 const sheet = document.getElementById("sheet");
 
@@ -42,5 +43,10 @@ add("Menu cards", CARD_GAMES.map((game) => [game, cardSvg(game)]));
 add("Sort It bins", ["toybox", "toolbox", "basket"].map((kind) => [kind, binSvg(kind)]));
 add("Copy Cat pads", [0, 1, 2, 3].map((i) => [String(i), `<div style="background:#ccc;border-radius:16px">${padSvg(i, 110)}</div>`]));
 add("Feelings stories", STORIES.map((s) => [`${s.id} (${s.answer})`, storyScene(s.id).replace(/<\/svg>$/, outline + "</svg>")]), "wide");
+add("App icon", [
+  ["Home Screen", appIconSvg({ size: 180 })],
+  ["maskable (Android)", appIconSvg({ size: 180, maskable: true })],
+  ["browser tab", appIconSvg({ size: 64, small: true })],
+]);
 
 for (const [title, cells, cls] of sections) section(title, cells, cls);

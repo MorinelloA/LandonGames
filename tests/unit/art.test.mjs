@@ -14,6 +14,7 @@ import { SCENES, storyScene } from "../../js/art/scenes.js";
 import { CARD_GAMES, cardSvg } from "../../js/art/cards.js";
 import { spriteSvg } from "../../js/art/ui.js";
 import { STORIES } from "../../js/logic/feelings.js";
+import { appIconSvg } from "../../tools/app-icon.js";
 
 const ICON_BASE = iconUrl("dog").replace(/dog\.svg$/, "");
 
@@ -45,7 +46,7 @@ test("every vendored icon is on disk", () => {
 });
 
 test("the cat, in every pose", () => {
-  for (const pose of ["sit", "wave", "cheer", "point", "peek"]) {
+  for (const pose of ["sit", "wave", "cheer", "point", "peek", "head"]) {
     checkSvg(`cat ${pose}`, catSvg({ pose }));
     checkSvg(`cat ${pose} flipped`, catSvg({ pose, flip: true }));
   }
@@ -90,4 +91,10 @@ test("every menu card and the interface icons", () => {
   assert.equal(CARD_GAMES.length, 12);
   const sprite = spriteSvg();
   assert.ok(sprite.includes('id="i-home"') && sprite.includes('id="i-help"'));
+});
+
+test("the app icon, in every version tools/make-icons.py draws", () => {
+  checkSvg("app icon", appIconSvg());
+  checkSvg("app icon maskable", appIconSvg({ maskable: true }));
+  checkSvg("app icon small", appIconSvg({ small: true }));
 });
