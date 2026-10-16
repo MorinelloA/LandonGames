@@ -65,13 +65,19 @@ App.games.mathpop = (() => {
     spawnBubbles();
   }
 
+  // the biggest number a level's problems can make, so a wrong answer is
+  // never a giveaway (a 13 beside a level-1 answer of 9)
+  function levelMax() {
+    return level <= 3 ? 10 : level <= 5 ? 20 : 30;
+  }
+
   function wrongAnswers(count) {
     const set = new Set([answer]);
     const spread = Math.max(4, Math.round(answer * 0.3));
     const out = [];
     while (out.length < count) {
       const w = answer + Math.floor(Math.random() * (spread * 2 + 1)) - spread;
-      if (w < 0 || set.has(w)) continue;
+      if (w < 0 || w > levelMax() || set.has(w)) continue;
       set.add(w);
       out.push(w);
     }

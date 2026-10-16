@@ -78,8 +78,15 @@ App.games.spelling = (() => {
       if (!word.includes(ch)) tiles.push(ch);
     }
 
+    // never deal the word already spelled out (1 time in 6 for a 3-letter
+    // word); decoys aren't in the word, so they're skipped in the check
+    let dealt = App.shuffle(tiles);
+    for (let tries = 0; tries < 20 && dealt.filter((ch) => word.includes(ch)).join("") === word; tries++) {
+      dealt = App.shuffle(tiles);
+    }
+
     lettersEl.innerHTML = "";
-    App.shuffle(tiles).forEach((ch) => {
+    dealt.forEach((ch) => {
       const t = document.createElement("button");
       t.className = "letter-tile";
       t.textContent = ch;

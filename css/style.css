@@ -421,7 +421,10 @@ main {
   display: flex;
   gap: clamp(14px, 3vw, 30px);
   padding: 10px 0 4px;
+  min-height: calc(clamp(70px, 12vh, 100px) + 19px); /* room kept while counting */
 }
+
+.count-answer { animation: popIn 0.25s; }
 
 .count-answer {
   width: clamp(70px, 12vh, 100px);

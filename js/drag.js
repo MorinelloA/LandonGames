@@ -33,7 +33,7 @@ const Drag = (() => {
         if (picked) el.style.transform = `translate(${dx}px, ${dy}px)`;
       };
 
-      const up = () => {
+      const up = (ev) => {
         el.removeEventListener("pointermove", move);
         el.removeEventListener("pointerup", up);
         el.removeEventListener("pointercancel", up);
@@ -45,11 +45,15 @@ const Drag = (() => {
         el.addEventListener("click", stop, true);
         setTimeout(() => el.removeEventListener("click", stop, true), 350);
 
+        // A cancelled pointer means iPadOS took the touch (a swipe from the
+        // edge, Control Center), not that he let go here: never a drop.
+        const cancelled = ev.type === "pointercancel";
+
         // find the drop target under the dragged element's center
         const r = el.getBoundingClientRect();
         const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
         let target = null;
-        for (const t of (opts.targets ? opts.targets() : [])) {
+        for (const t of (!cancelled && opts.targets ? opts.targets() : [])) {
           const tr = t.getBoundingClientRect();
           if (cx >= tr.left && cx <= tr.right && cy >= tr.top && cy <= tr.bottom) {
             target = t;
@@ -58,7 +62,7 @@ const Drag = (() => {
         }
 
         el.style.transition = "";
-        const accepted = opts.onDrop ? opts.onDrop(target) === true : false;
+        const accepted = !cancelled && opts.onDrop ? opts.onDrop(target) === true : false;
         if (!accepted) {
           // glide gently back home
           el.style.transition = "transform 0.3s";

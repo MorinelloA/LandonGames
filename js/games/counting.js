@@ -52,6 +52,11 @@ App.games.counting = (() => {
       area.appendChild(item);
     });
 
+    // the numbers wait until everything is counted, so he counts first
+    answersEl.innerHTML = "";
+  }
+
+  function showAnswers() {
     const options = new Set([target]);
     while (options.size < 3) {
       const w = target + Math.floor(Math.random() * 5) - 2;
@@ -89,7 +94,12 @@ App.games.counting = (() => {
       item.appendChild(tag);
     }
     Sound.pop();
-    Sound.speak(String(counted), { rate: 1.05 });
+    if (counted === target) {
+      Sound.say([String(counted), "How many?"], { rate: 1.05 });
+      showAnswers();
+    } else {
+      Sound.speak(String(counted), { rate: 1.05 });
+    }
   }
 
   function tapAnswer(btn, n) {
@@ -117,10 +127,13 @@ App.games.counting = (() => {
       area.querySelectorAll(".count-item").forEach((el) => el.remove());
     },
     hint() {
+      // still counting: glow the next one to count; then glow the answer
+      const next = area.querySelector(".count-item:not(.counted)");
       const right = [...answersEl.children].find((b) => parseInt(b.textContent, 10) === target);
-      if (right) {
-        right.classList.add("hint-glow");
-        setTimeout(() => right.classList.remove("hint-glow"), 2200);
+      const el = next || right;
+      if (el) {
+        el.classList.add("hint-glow");
+        setTimeout(() => el.classList.remove("hint-glow"), 2200);
       }
     },
   };
