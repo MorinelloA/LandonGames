@@ -42,24 +42,26 @@
     </section>
 
     <!-- ============ MATH BUBBLES ============ -->
-    <section id="screen-mathpop" class="screen classic">
-      <div class="game-header"><p class="game-hint">Drag the right answer into the box!</p></div>
-      <div id="math-problem" class="big-problem"></div>
+    <section id="screen-mathpop" class="screen">
+      <div class="backdrop"></div>
+      <div id="math-problem" class="panel"></div>
       <div id="bubble-area"></div>
     </section>
 
     <!-- ============ WORD BUILDER ============ -->
-    <section id="screen-spelling" class="screen classic">
-      <div class="game-header"><p class="game-hint">Drag the letters into place to spell the word!</p></div>
-      <div id="spell-picture"></div>
-      <button id="spell-hear" class="chunky-btn small">🔊 Hear it</button>
-      <div id="spell-slots"></div>
+    <section id="screen-spelling" class="screen">
+      <div class="backdrop"></div>
+      <div class="word-picture">
+        <div id="spell-picture" class="pic-card"></div>
+        <button id="spell-hear" class="speak-btn" aria-label="Hear the word"></button>
+      </div>
+      <div class="word-shelf"><div id="spell-slots"></div></div>
       <div id="spell-letters"></div>
     </section>
 
     <!-- ============ ANIMAL MATCH ============ -->
-    <section id="screen-memory" class="screen classic">
-      <div class="game-header"><p class="game-hint">Find the matching pairs!</p></div>
+    <section id="screen-memory" class="screen">
+      <div class="backdrop"></div>
       <div id="memory-grid"></div>
     </section>
 
@@ -77,11 +79,14 @@
     </section>
 
     <!-- ============ COUNTING TIME ============ -->
-    <section id="screen-counting" class="screen classic">
-      <div class="game-header"><p class="game-hint">Drag each one into the basket to count, then pick the number!</p></div>
-      <div id="count-area">
-        <div id="count-basket">🧺<span id="basket-tag" class="count-tag">0</span></div>
+    <section id="screen-counting" class="screen">
+      <div class="backdrop"></div>
+      <div class="caption panel caption-left">
+        <button id="count-hear" class="speak-btn" aria-label="Hear it again"></button>
+        <p id="count-prompt"></p>
       </div>
+      <div id="count-area"></div>
+      <div id="count-basket"><span id="basket-tag" class="count-tag">0</span></div>
       <div id="count-answers"></div>
     </section>
 
@@ -115,14 +120,14 @@
     </section>
 
     <!-- ============ SORT IT! ============ -->
-    <section id="screen-sortit" class="screen classic">
-      <div class="game-header"><p id="sort-prompt" class="game-hint"></p></div>
-      <button id="sort-hear" class="chunky-btn small">🔊 Hear it</button>
-      <div id="sort-cards"></div>
-      <div id="sort-bin">
-        <span class="sort-bin-emoji">🗂️</span>
-        <span id="sort-bin-label"></span>
+    <section id="screen-sortit" class="screen">
+      <div class="backdrop"></div>
+      <div class="caption panel caption-top">
+        <button id="sort-hear" class="speak-btn" aria-label="Hear it again"></button>
+        <p id="sort-prompt"></p>
       </div>
+      <div id="sort-cards"></div>
+      <div id="sort-bin"></div>
     </section>
 
     <!-- ============ TRACE IT ============ -->

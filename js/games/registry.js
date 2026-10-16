@@ -15,16 +15,16 @@ import feelings from "./feelings.js";
 import trace from "./trace.js";
 
 export const GAME_LIST = [
-  { id: "mathpop", title: "Math Bubbles", game: mathpop },
-  { id: "spelling", title: "Word Builder", game: spelling },
-  { id: "memory", title: "Animal Match", game: memory },
+  { id: "mathpop", title: "Math Bubbles", game: mathpop, drawn: true },
+  { id: "spelling", title: "Word Builder", game: spelling, drawn: true },
+  { id: "memory", title: "Animal Match", game: memory, drawn: true },
   { id: "simon", title: "Copy Cat", game: simon },
-  { id: "counting", title: "Counting Time", game: counting },
+  { id: "counting", title: "Counting Time", game: counting, drawn: true },
   { id: "music", title: "Music Maker", game: music },
   { id: "puzzle", title: "Puzzle Builder", game: puzzle },
   { id: "maze", title: "Cheese Maze", game: maze },
   { id: "photopuzzle", title: "Picture Puzzle", game: photopuzzle },
-  { id: "sortit", title: "Sort It!", game: sortit },
+  { id: "sortit", title: "Sort It!", game: sortit, drawn: true },
   { id: "feelings", title: "Feelings", game: feelings, drawn: true },
   { id: "trace", title: "Trace It", game: trace },
 ];

@@ -2,7 +2,19 @@
 // pick the total from.
 import { shuffle } from "../core/rng.js";
 
-export const THEMES = ["🐟", "⭐", "🍎", "🐞", "🎈", "🐢", "🌸", "🚀", "🦋", "🍪"];
+// what to count (an icon), what to call them, and where they are
+export const THEMES = [
+  { item: "apple", plural: "apples", place: "park" },
+  { item: "ladybug", plural: "ladybugs", place: "park" },
+  { item: "flower", plural: "flowers", place: "park" },
+  { item: "butterfly", plural: "butterflies", place: "park" },
+  { item: "fish", plural: "fish", place: "sea" },
+  { item: "turtle", plural: "turtles", place: "sea" },
+  { item: "star", plural: "stars", place: "space" },
+  { item: "rocket", plural: "rockets", place: "space" },
+  { item: "balloon", plural: "balloons", place: "party" },
+  { item: "cookie", plural: "cookies", place: "kitchen" },
+];
 export const MIN_COUNT = 3;
 export const MAX_COUNT = 10;
 

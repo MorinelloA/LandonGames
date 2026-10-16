@@ -57,3 +57,8 @@ export function iconUrl(id) {
   if (!(id in ICONS)) throw new Error("No icon called " + id);
   return ICON_DIR + id + ".svg";
 }
+
+// an <img> of an icon, for HTML
+export function iconImg(id, size = 160, cls = "icon") {
+  return `<img class="${cls}" src="${iconUrl(id)}" width="${size}" height="${size}" alt="" draggable="false">`;
+}

@@ -37,3 +37,14 @@ test("features pair up with their opposites", () => {
     for (const item of f.items) assert.ok(!o.items.includes(item), `${item} is both ${f.name} and ${o.name}`);
   }
 });
+
+test("every thing Sort It can show has a picture", async () => {
+  const { ICONS } = await import("../../js/art/icons.js");
+  const shown = [
+    ...Object.values(CLASSES).flat(),
+    ...FUNCTIONS.flatMap((f) => f.correct),
+    ...FUNCTION_DISTRACTORS,
+    ...FEATURES.flatMap((f) => f.items),
+  ];
+  for (const id of shown) assert.ok(id in ICONS, `no icon for ${id}`);
+});

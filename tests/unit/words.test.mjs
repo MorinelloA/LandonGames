@@ -7,16 +7,16 @@ test("every level has plenty of words of its lengths", () => {
   for (let level = 1; level <= LEVELS.length; level++) {
     const pool = wordPool(level);
     assert.ok(pool.length >= 8, `level ${level} has ${pool.length} words`);
-    for (const w of pool) assert.ok(LEVELS[level - 1].lengths.includes(w.word.length));
+    for (const w of pool) assert.ok(LEVELS[level - 1].lengths.includes(w.length));
   }
-  assert.equal(new Set(WORDS.map((w) => w.word)).size, WORDS.length, "no word twice");
+  assert.equal(new Set(WORDS).size, WORDS.length, "no word twice");
 });
 
 test("letters are never dealt already spelling the word", () => {
   const rand = seeded(3);
   for (let level = 1; level <= LEVELS.length; level++) {
     const { decoys } = LEVELS[level - 1];
-    for (const { word } of wordPool(level)) {
+    for (const word of wordPool(level)) {
       for (let i = 0; i < 200; i++) {
         const tiles = deal(word, decoys, rand);
         assert.ok(!inOrder(tiles, word), `${word} dealt in order: ${tiles.join("")}`);
@@ -28,4 +28,9 @@ test("letters are never dealt already spelling the word", () => {
       }
     }
   }
+});
+
+test("every word has its picture", async () => {
+  const { ICONS } = await import("../../js/art/icons.js");
+  for (const w of WORDS) assert.ok(w in ICONS, `no icon for ${w}`);
 });

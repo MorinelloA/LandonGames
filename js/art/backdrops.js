@@ -2,6 +2,7 @@
 // units (the stage is 1133 x 640) plus a generous bleed on every side, so
 // any screen shape shows more scenery at the edges rather than bars.
 import { WORLD as W, shade } from "./theme.js";
+import { seaPlace } from "./gameart.js";
 import { el, g, rect, circle, ellipse, path, polygon, svg, starPoints, uid } from "./svg.js";
 
 export const STAGE_W = 1133;
@@ -203,8 +204,23 @@ function menuRoom() {
   );
 }
 
+// a starry night sky over dark hills
+function nightSky() {
+  return g({},
+    rect(X0, Y0, FULL_W, Y1 - Y0, { fill: W.night }),
+    moonAndStars(),
+    ...[[300, 300, 6], [560, 250, 5], [880, 330, 6], [40, 380, 5], [1100, 260, 7], [700, 420, 5]].map(([x, y, r]) =>
+      polygon(starPoints(x, y, r, r * 0.45), { fill: W.star })),
+    circle(140, 150, 30, { fill: "#F2A27E" }), ellipse(140, 150, 52, 9, { fill: "none", stroke: "#F7CDB9", strokeWidth: 5 }),
+    path(`M${X0} 560Q200 500 520 556T${X1} 540V${Y1}H${X0}Z`, { fill: "#3B4378" }),
+    path(`M${X0} 610Q340 570 700 612T${X1} 600V${Y1}H${X0}Z`, { fill: "#2B3263" }),
+  );
+}
+
 export const PLACES = {
   menu: menuRoom,
+  sea: () => seaPlace(X0, Y0, FULL_W, Y1),
+  space: nightSky,
   park: () => outdoors(),
   playground: () => outdoors({ trees: [[60, 1.1]], extra: slide(560, 560) }),
   pool: () => outdoors({ trees: [[60, 1.1]], flowers: false, extra: pool(300, 520, 470) }),

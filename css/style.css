@@ -409,6 +409,356 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
   75% { translate: -5px; }
 }
 
+/* ===== Shared game pieces ===== */
+.caption-top {
+  left: 50%;
+  translate: -50% 0;
+  width: auto;
+  max-width: 820px;
+  padding-right: 30px;
+}
+
+.caption-top p { font-size: 32px; white-space: nowrap; }
+
+.pic-card {
+  width: 226px;
+  height: 226px;
+  background: #FFFFFF;
+  border-radius: 32px;
+  box-shadow: 0 7px 0 var(--paper-deep);
+  display: grid;
+  place-items: center;
+  transition: transform 0.12s, opacity 0.3s;
+}
+
+.pic-card .icon { width: 168px; height: 168px; pointer-events: none; }
+.pic-card.size-big .icon { width: 212px; height: 212px; }
+.pic-card.size-little .icon { width: 78px; height: 78px; }
+.pic-card:active { transform: scale(0.97); }
+.pic-card.wrong { animation: shake 0.4s; }
+
+/* ===== Sort It! ===== */
+#sort-cards {
+  position: absolute;
+  left: 120px;
+  top: 116px;
+  width: 893px;
+  height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+}
+
+#sort-bin {
+  position: absolute;
+  left: 386px;
+  top: 384px;
+  width: 360px;
+  height: 248px;
+  border-radius: 48px;
+  display: grid;
+  place-items: center;
+  transition: box-shadow 0.15s;
+}
+
+#sort-bin .bin-art { width: 340px; height: 256px; }
+#sort-bin.armed { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.8), 0 0 30px 10px var(--glow); }
+#sort-bin.happy .bin-art { animation: bump 0.45s; }
+
+/* ===== Word Builder ===== */
+.word-picture {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-left: 76px; /* balances the speaker, keeping the picture centred */
+}
+
+#spell-picture { width: 232px; height: 232px; }
+#spell-picture .icon { width: 184px; height: 184px; }
+
+.word-shelf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 272px;
+  display: flex;
+  justify-content: center;
+}
+
+#spell-slots {
+  display: flex;
+  gap: 14px;
+  padding: 14px 18px 20px;
+  background: #D9A26A;
+  border-radius: 24px;
+  box-shadow: 0 8px 0 #B9824D;
+}
+
+.letter-slot {
+  width: 100px;
+  height: 100px;
+  border-radius: 18px;
+  border: 5px dashed rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.22);
+  display: grid;
+  place-items: center;
+  font-size: 60px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.letter-slot.filled {
+  border: none;
+  background: var(--tint);
+  color: var(--ink-c);
+  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, 0.35);
+  animation: popIn 0.25s;
+}
+
+#spell-letters {
+  position: absolute;
+  left: 40px;
+  width: 930px;
+  top: 452px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.letter-block {
+  width: 98px;
+  height: 98px;
+  border-radius: 18px;
+  background: var(--tint);
+  color: var(--ink-c);
+  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, 0.35), 0 7px 0 var(--deep);
+  font-size: 60px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform 0.12s, opacity 0.2s;
+}
+
+.letter-block:active { transform: scale(0.94); }
+.letter-block.used { opacity: 0; pointer-events: none; }
+.letter-block.wrong { animation: shake 0.4s; }
+
+@keyframes popIn {
+  0% { transform: scale(0.5); }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* ===== Animal Match ===== */
+#memory-grid {
+  position: absolute;
+  left: 50%;
+  top: 34px;
+  translate: -50% 0;
+  display: grid;
+  grid-template-columns: repeat(4, 156px);
+  gap: 20px;
+}
+
+.mem-card {
+  position: relative;
+  width: 156px;
+  height: 172px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s;
+}
+
+.mem-card .face {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.mem-card .back { background: #6DB86F; box-shadow: 0 7px 0 #559B57; }
+.mem-card .back svg { width: 84px; height: 84px; }
+.mem-card .front { background: #FFFFFF; box-shadow: 0 7px 0 var(--paper-deep); transform: rotateY(180deg); }
+.mem-card .front .icon { width: 118px; height: 118px; pointer-events: none; }
+.mem-card.flipped { transform: rotateY(180deg); }
+.mem-card.matched .front { box-shadow: 0 7px 0 #EBCB78, 0 0 0 6px #FFE39A; }
+.mem-card.matched { animation: matchBump 0.5s; pointer-events: none; }
+
+@keyframes matchBump {
+  0%, 100% { transform: rotateY(180deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(1.08); }
+}
+
+/* ===== Math Bubbles ===== */
+#math-problem {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  translate: -50% 0;
+  height: 118px;
+  padding: 0 34px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 80px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+#math-problem .op { color: var(--accent-mathpop); }
+
+#math-drop {
+  width: 112px;
+  height: 92px;
+  border-radius: 22px;
+  border: 6px dashed #9CCFE8;
+  background: #EEF8FD;
+  color: #9CCFE8;
+  display: grid;
+  place-items: center;
+  font-size: 64px;
+  transition: transform 0.15s, background 0.15s;
+}
+
+#math-drop.armed { background: #D9F1FC; transform: scale(1.08); }
+#math-drop.solved { border-style: solid; border-color: transparent; background: #FFF0C4; color: var(--ink); }
+
+#bubble-area {
+  position: absolute;
+  left: 50px;
+  top: 150px;
+  width: 900px;
+  height: 470px;
+}
+
+.bubble {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.bubble-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.45);
+  display: grid;
+  place-items: center;
+  font-size: 66px;
+  font-weight: 700;
+  color: #FFFFFF;
+  animation: bob 3.2s ease-in-out infinite;
+}
+
+.bubble-inner::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 22px;
+  width: 34px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  rotate: -30deg;
+}
+
+.bubble.pop .bubble-inner { animation: bubblePop 0.35s forwards; }
+.bubble.wrong .bubble-inner { animation: shake 0.4s; }
+.bubble.dragging .bubble-inner { animation: none; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes bubblePop {
+  40% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ===== Counting Time ===== */
+.caption-left { width: auto; padding-right: 30px; }
+.caption-left p { white-space: nowrap; }
+
+#count-area {
+  position: absolute;
+  inset: 0;
+}
+
+.count-item {
+  position: absolute;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+
+.count-item .icon { width: 104px; height: 104px; pointer-events: none; }
+.count-item.counted .icon { opacity: 0.45; }
+.count-item.in-basket { transition: transform 0.35s ease-in, opacity 0.35s; opacity: 0; pointer-events: none; }
+
+.count-tag {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  min-width: 46px;
+  height: 46px;
+  border-radius: 23px;
+  background: var(--glow);
+  color: #5C4300;
+  font-size: 28px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 4px #FFFFFF;
+}
+
+#count-basket {
+  position: absolute;
+  left: 24px;
+  top: 392px;
+  width: 300px;
+  height: 236px;
+}
+
+#count-basket .bin-art { width: 300px; height: 226px; }
+#count-basket .count-tag { right: 6px; top: 10px; min-width: 64px; height: 64px; border-radius: 32px; font-size: 38px; }
+#count-basket.happy .bin-art { animation: bump 0.4s; }
+
+#count-answers {
+  position: absolute;
+  left: 380px;
+  top: 486px;
+  width: 520px;
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+}
+
+.count-answer {
+  width: 118px;
+  height: 118px;
+  border-radius: 28px;
+  background: #FFFFFF;
+  box-shadow: 0 7px 0 var(--paper-deep);
+  font-size: 68px;
+  font-weight: 700;
+  animation: popIn 0.25s;
+}
+
+.count-answer:active { transform: scale(0.94); }
+.count-answer.wrong { animation: shake 0.4s; }
+
 /* ===== The cat buddy (in every redrawn game) ===== */
 #buddy {
   position: absolute;
@@ -532,6 +882,7 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
 
 @media (prefers-reduced-motion: reduce) {
   .confetti { display: none; }
+  .bubble-inner { animation: none; }
   .cheer-card { animation: cheerFade 1.6s ease forwards; }
   #buddy.cheer .cat-art { animation: none; }
   #rotate-overlay .ico { animation: none; transform: rotate(0deg); }

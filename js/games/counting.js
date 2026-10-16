@@ -1,5 +1,6 @@
 // Counting Time: drag each thing into the basket (or tap it) to count it
-// out loud, then pick how many there were.
+// out loud, then pick how many there were. The numbers to pick from only
+// appear once everything is counted, so the counting comes first.
 import * as Sound from "../core/sound.js";
 import * as Drag from "../core/drag.js";
 import { later } from "../core/session.js";
@@ -7,43 +8,68 @@ import { awardStars } from "../core/rewards.js";
 import { freeze } from "../core/freeze.js";
 import { shuffle, pick } from "../core/rng.js";
 import { glow } from "../core/hint.js";
+import { flyInto, flash } from "../core/fx.js";
 import { THEMES, newTarget, answerOptions } from "../logic/counting.js";
+import { iconImg } from "../art/icons.js";
+import { binSvg } from "../art/gameart.js";
+import { backdropSvg } from "../art/backdrops.js";
+import { useIcon } from "../art/ui.js";
 
+const screen = document.getElementById("screen-counting");
+const backdropEl = screen.querySelector(".backdrop");
 const area = document.getElementById("count-area");
 const answersEl = document.getElementById("count-answers");
 const basket = document.getElementById("count-basket");
 const basketTag = document.getElementById("basket-tag");
+const promptEl = document.getElementById("count-prompt");
+const hearBtn = document.getElementById("count-hear");
+hearBtn.innerHTML = useIcon("speaker");
+basket.insertAdjacentHTML("afterbegin", binSvg("basket"));
+
+// where things can sit: a grid over the stage, clear of the caption, the
+// basket, the numbers and the cat
+const SPOTS = [];
+for (let row = 0; row < 3; row++) {
+  for (let col = 0; col < 8; col++) {
+    const x = 40 + col * 128, y = 104 + row * 124;
+    const underBasket = x < 330 && y + 112 > 392;
+    const underCat = x + 112 > 960 && y + 112 > 480;
+    if (!underBasket && !underCat) SPOTS.push([x, y]);
+  }
+}
 
 let target = 0;
 let counted = 0;
 let answered = false;
 let running = false;
+let theme = null;
+let place = "";
+
+function say() {
+  Sound.speak("Count the " + theme.plural + "!");
+}
 
 function newRound() {
   answered = false;
   counted = 0;
   basketTag.textContent = "0";
   target = newTarget();
-  const emoji = pick(THEMES);
+  theme = pick(THEMES);
+  if (theme.place !== place) {
+    backdropEl.innerHTML = backdropSvg(theme.place);
+    place = theme.place;
+  }
+  promptEl.textContent = "Count the " + theme.plural + "!";
 
-  area.querySelectorAll(".count-item").forEach((el) => el.remove());
-  const W = area.clientWidth, H = area.clientHeight - 40; // keep clear of the answer row
-  const cell = 110;
-  const cols = Math.max(2, Math.floor(W / (cell * 1.3)));
-  const rows = Math.max(2, Math.floor(H / (cell * 1.3)));
-  const cells = shuffle(
-    Array.from({ length: cols * rows }, (_, i) => i)
-      .filter((i) => !(i % cols === 0 && Math.floor(i / cols) === rows - 1)) // keep the basket's corner free
-  ).slice(0, target);
-
-  cells.forEach((cellIdx) => {
-    const cx = cellIdx % cols, cy = Math.floor(cellIdx / cols);
+  area.innerHTML = "";
+  for (const [x, y] of shuffle(SPOTS).slice(0, target)) {
     const item = document.createElement("button");
     item.className = "count-item";
-    item.textContent = emoji;
-    item.style.left = cx * (W / cols) + Math.random() * Math.max(0, W / cols - cell) + "px";
-    item.style.top = cy * (H / rows) + Math.random() * Math.max(0, H / rows - cell) + "px";
-    // tap counts it in place...
+    item.setAttribute("aria-label", theme.item);
+    item.innerHTML = iconImg(theme.item, 104);
+    item.style.left = x + Math.round(Math.random() * 14 - 7) + "px";
+    item.style.top = y + Math.round(Math.random() * 12 - 6) + "px";
+    // tap counts it where it is...
     item.addEventListener("click", () => countItem(item, false));
     // ...dragging it into the basket counts it too
     Drag.enable(item, {
@@ -57,21 +83,21 @@ function newRound() {
       },
     });
     area.appendChild(item);
-  });
+  }
 
-  // the numbers wait until everything is counted, so he counts first
   answersEl.innerHTML = "";
+  say();
 }
 
 function showAnswers() {
   answersEl.innerHTML = "";
-  answerOptions(target).forEach((n) => {
+  for (const n of answerOptions(target)) {
     const b = document.createElement("button");
     b.className = "count-answer";
     b.textContent = String(n);
     b.addEventListener("click", () => tapAnswer(b, n));
     answersEl.appendChild(b);
-  });
+  }
 }
 
 function countItem(item, intoBasket) {
@@ -79,21 +105,11 @@ function countItem(item, intoBasket) {
   counted++;
   item.classList.add("counted");
   if (intoBasket) {
-    // shrink into the basket
-    const br = basket.getBoundingClientRect();
-    const ir = item.getBoundingClientRect();
-    item.classList.add("in-basket");
-    item.style.transform =
-      `translate(${br.left + br.width / 2 - (ir.left + ir.width / 2)}px, ` +
-      `${br.top + br.height / 2 - (ir.top + ir.height / 2)}px) scale(0.25)`;
+    flyInto(item, basket, { scale: 0.25 });
     basketTag.textContent = String(counted);
-    basket.style.animation = "countBounce 0.4s";
-    setTimeout(() => { basket.style.animation = ""; }, 420);
+    flash(basket, "happy", 420);
   } else {
-    const tag = document.createElement("span");
-    tag.className = "count-tag";
-    tag.textContent = String(counted);
-    item.appendChild(tag);
+    item.insertAdjacentHTML("beforeend", `<span class="count-tag">${counted}</span>`);
   }
   Sound.pop();
   if (counted === target) {
@@ -110,14 +126,19 @@ function tapAnswer(btn, n) {
     answered = true;
     Sound.success();
     later(() => Sound.speak(target + "! That's right!"), 200);
-    awardStars(1, { message: target + "! 🎉" });
-    later(newRound, 2000);
+    awardStars(1, { message: target + "!" });
+    later(newRound, 2200);
   } else {
     btn.classList.add("wrong");
     setTimeout(() => btn.classList.remove("wrong"), 450);
     freeze(); // silence + a short pause: mistakes earn no sounds
   }
 }
+
+hearBtn.addEventListener("click", () => {
+  Sound.click();
+  if (theme) say();
+});
 
 export default {
   start() {
@@ -126,7 +147,7 @@ export default {
   },
   stop() {
     running = false;
-    area.querySelectorAll(".count-item").forEach((el) => el.remove());
+    area.innerHTML = "";
   },
   hint() {
     // still counting: glow the next one to count; then glow the answer

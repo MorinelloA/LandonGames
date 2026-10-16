@@ -2,19 +2,15 @@
 // decoy letters (never in the word) join at the top levels.
 import { shuffle } from "../core/rng.js";
 
+// each word's picture is the icon of the same name (js/art/icons.js)
 export const WORDS = [
-  ["cat", "🐱"], ["dog", "🐶"], ["sun", "☀️"], ["bee", "🐝"], ["cow", "🐮"],
-  ["pig", "🐷"], ["fox", "🦊"], ["owl", "🦉"], ["bus", "🚌"], ["car", "🚗"],
-  ["hat", "🎩"], ["egg", "🥚"], ["ant", "🐜"], ["cup", "☕"], ["key", "🔑"],
-  ["star", "⭐"], ["fish", "🐟"], ["frog", "🐸"], ["cake", "🎂"], ["milk", "🥛"],
-  ["ball", "⚽"], ["duck", "🦆"], ["bear", "🐻"], ["lion", "🦁"], ["moon", "🌙"],
-  ["tree", "🌳"], ["boat", "⛵"], ["bird", "🐦"], ["corn", "🌽"], ["ring", "💍"],
-  ["apple", "🍎"], ["pizza", "🍕"], ["robot", "🤖"], ["train", "🚂"], ["house", "🏠"],
-  ["snake", "🐍"], ["sheep", "🐑"], ["mouse", "🐭"], ["grape", "🍇"], ["tiger", "🐯"],
-  ["whale", "🐳"], ["zebra", "🦓"], ["bread", "🍞"], ["cloud", "☁️"], ["heart", "❤️"],
-  ["rabbit", "🐰"], ["monkey", "🐵"], ["banana", "🍌"], ["orange", "🍊"], ["cookie", "🍪"],
-  ["flower", "🌸"], ["turtle", "🐢"], ["dragon", "🐉"], ["rocket", "🚀"], ["cherry", "🍒"],
-].map(([word, emoji]) => ({ word, emoji }));
+  "cat", "dog", "sun", "bee", "cow", "pig", "fox", "owl", "bus", "car",
+  "hat", "egg", "ant", "cup", "key", "star", "fish", "frog", "cake", "milk",
+  "ball", "duck", "bear", "lion", "moon", "tree", "boat", "bird", "corn", "ring",
+  "apple", "pizza", "robot", "train", "house", "snake", "sheep", "mouse", "grape", "tiger",
+  "whale", "zebra", "bread", "cloud", "heart", "rabbit", "monkey", "banana", "orange", "cookie",
+  "flower", "turtle", "dragon", "rocket", "cherry",
+];
 
 // level → which word lengths he sees, plus decoy letters at the top levels
 export const LEVELS = [
@@ -32,7 +28,7 @@ export const ERRORS_TO_EASE_DOWN = 3; // mistakes on one word
 
 export function wordPool(level) {
   const { lengths } = LEVELS[level - 1];
-  return WORDS.filter((w) => lengths.includes(w.word.length));
+  return WORDS.filter((w) => lengths.includes(w.length));
 }
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
