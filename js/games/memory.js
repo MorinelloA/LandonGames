@@ -1,117 +1,109 @@
-/* ===== Animal Match: memory pairs — each animal says its name ===== */
-App.games.memory = (() => {
-  const grid = document.getElementById("memory-grid");
+// Animal Match: the classic pairs game; each animal says its name when
+// flipped. Flipping a pair that doesn't match is how the game is played,
+// not a mistake, so it never freezes — the cards just flip back quietly.
+import * as Sound from "../core/sound.js";
+import { later } from "../core/session.js";
+import { awardStars } from "../core/rewards.js";
+import { shuffle } from "../core/rng.js";
+import { glow } from "../core/hint.js";
+import { ANIMALS } from "../logic/memory.js";
 
-  const animals = [
-    ["dog", "🐶", Sound.N.C4], ["cat", "🐱", Sound.N.E4], ["cow", "🐮", Sound.N.G4],
-    ["duck", "🦆", Sound.N.A4], ["lion", "🦁", Sound.N.C5], ["frog", "🐸", Sound.N.E5],
-  ];
+const grid = document.getElementById("memory-grid");
 
-  let firstPick = null;
-  let locked = false;
-  let matched = 0;
-  let running = false;
+let firstPick = null;
+let locked = false;
+let matched = 0;
+let running = false;
 
-  function build() {
-    matched = 0;
-    firstPick = null;
-    locked = false;
-    grid.innerHTML = "";
-    const cards = App.shuffle(
-      animals.flatMap(([name, emoji, note]) => [
-        { name, emoji, note }, { name, emoji, note },
-      ])
-    );
-    cards.forEach((c) => {
-      const btn = document.createElement("button");
-      btn.className = "mem-card";
-      btn.dataset.name = c.name;
-      btn.innerHTML =
-        `<span class="mem-face mem-back">❓</span>` +
-        `<span class="mem-face mem-front">${c.emoji}</span>`;
-      btn.addEventListener("click", () => tapCard(btn, c));
-      grid.appendChild(btn);
-    });
+function build() {
+  matched = 0;
+  firstPick = null;
+  locked = false;
+  grid.innerHTML = "";
+  const cards = shuffle(ANIMALS.flatMap((a) => [a, a]));
+  cards.forEach((c) => {
+    const btn = document.createElement("button");
+    btn.className = "mem-card";
+    btn.dataset.name = c.name;
+    btn.innerHTML =
+      `<span class="mem-face mem-back">❓</span>` +
+      `<span class="mem-face mem-front">${c.emoji}</span>`;
+    btn.addEventListener("click", () => tapCard(btn, c));
+    grid.appendChild(btn);
+  });
+}
+
+function tapCard(btn, c) {
+  if (!running || locked || btn.classList.contains("flipped")) return;
+  Sound.flip();
+  Sound.tone(Sound.N[c.note], { type: "triangle", dur: 0.35, gain: 0.2 });
+  btn.classList.add("flipped");
+  Sound.speak(c.name);
+
+  if (!firstPick) {
+    firstPick = { btn, c };
+    return;
   }
 
-  function tapCard(btn, c) {
-    if (!running || locked || btn.classList.contains("flipped")) return;
-    Sound.flip();
-    Sound.tone(c.note, { type: "triangle", dur: 0.35, gain: 0.2 });
-    btn.classList.add("flipped");
-    Sound.speak(c.name);
+  if (firstPick.c.name === c.name) {
+    // match!
+    const a = firstPick.btn;
+    firstPick = null;
+    matched++;
+    later(() => {
+      a.classList.add("matched");
+      btn.classList.add("matched");
+      Sound.success();
+      if (matched === ANIMALS.length) {
+        later(() => {
+          Sound.fanfare();
+          awardStars(3, { message: "You found them all! 🏆" });
+          Sound.speak("You found all the animals! Amazing!");
+          later(build, 2300);
+        }, 600);
+      }
+    }, 450);
+  } else {
+    // not a match — a silent flip-back
+    locked = true;
+    const a = firstPick.btn;
+    firstPick = null;
+    later(() => {
+      a.classList.remove("flipped");
+      btn.classList.remove("flipped");
+      locked = false;
+    }, 1100);
+  }
+}
 
-    if (!firstPick) {
-      firstPick = { btn, c };
+export default {
+  start() {
+    running = true;
+    build();
+  },
+  stop() {
+    running = false;
+  },
+  hint() {
+    const hidden = /** @type {HTMLElement[]} */ ([...grid.children]).filter(
+      (c) => !c.classList.contains("flipped") && !c.classList.contains("matched")
+    );
+    if (firstPick) {
+      // glow where the match for his flipped card is hiding
+      glow(hidden.find((c) => c.dataset.name === firstPick.c.name));
       return;
     }
-
-    if (firstPick.c.name === c.name) {
-      // match!
-      const a = firstPick.btn;
-      firstPick = null;
-      matched++;
-      App.later(() => {
-        a.classList.add("matched");
-        btn.classList.add("matched");
-        Sound.success();
-        if (matched === animals.length) {
-          App.later(() => {
-            Sound.fanfare();
-            App.awardStars(3, { message: "You found them all! 🏆" });
-            Sound.speak("You found all the animals! Amazing!");
-            App.later(build, 2300);
-          }, 600);
-        }
-      }, 450);
-    } else {
-      // not a match — flip both back gently
-      locked = true;
-      const a = firstPick.btn;
-      firstPick = null;
-      // no freeze here — flipping non-matching pairs is how a memory game
-      // is played, not a mistake. Just a silent flip-back.
-      App.later(() => {
-        a.classList.remove("flipped");
-        btn.classList.remove("flipped");
-        locked = false;
-      }, 1100);
-    }
-  }
-
-  return {
-    start() {
-      running = true;
-      build();
-    },
-    stop() {
-      running = false;
-    },
-    hint() {
-      const hidden = [...grid.children].filter(
-        (c) => !c.classList.contains("flipped") && !c.classList.contains("matched")
-      );
-      if (firstPick) {
-        // glow where the match for his flipped card is hiding
-        const match = hidden.find((c) => c.dataset.name === firstPick.c.name);
-        if (match) {
-          match.classList.add("hint-glow");
-          setTimeout(() => match.classList.remove("hint-glow"), 2200);
-        }
-        return;
-      }
-      // otherwise sneak a peek at one pair
-      if (locked) return;
-      const byName = {};
-      hidden.forEach((c) => (byName[c.dataset.name] = byName[c.dataset.name] || []).push(c));
-      const pair = Object.values(byName).find((p) => p.length === 2);
-      if (!pair) return;
-      locked = true;
-      pair.forEach((c) => c.classList.add("flipped"));
-      App.later(() => {
-        pair.forEach((c) => c.classList.remove("flipped"));
-        locked = false;
-      }, 1300);
-    },
-  };
-})();
+    // otherwise sneak a peek at one pair
+    if (locked) return;
+    const byName = {};
+    hidden.forEach((c) => (byName[c.dataset.name] = byName[c.dataset.name] || []).push(c));
+    const pair = Object.values(byName).find((p) => p.length === 2);
+    if (!pair) return;
+    locked = true;
+    pair.forEach((c) => c.classList.add("flipped"));
+    later(() => {
+      pair.forEach((c) => c.classList.remove("flipped"));
+      locked = false;
+    }, 1300);
+  },
+};
