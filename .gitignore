@@ -8,3 +8,6 @@ tools/preview.png
 
 # Photo originals: tools/photos.py turns these into photos/
 photos-src/
+
+# tools/voice.mjs: raw ElevenLabs takes, transcripts and the ledger of paid calls
+.voice-cache/

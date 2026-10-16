@@ -1,0 +1,39 @@
+{
+  "narrator": {
+    "id": "EXAVITQu4vr4xnSDxMaL",
+    "name": "Sarah"
+  },
+  "help": {
+    "id": "TX3LPaxmHKxFdv7VOQHJ",
+    "name": "Liam"
+  },
+  "model": "eleven_multilingual_v2",
+  "settings": {
+    "stability": 0.65,
+    "similarity_boost": 0.8,
+    "style": 0,
+    "use_speaker_boost": true,
+    "speed": 0.95
+  },
+  "seed": 4207,
+  "format": "mp3_44100_128",
+  "spoken": {
+    "ant": "Ant!",
+    "K! Nice tracing!": "K. Nice tracing!",
+    "k! Nice tracing!": "K. Nice tracing!"
+  },
+  "retakes": {
+    "sun": 1,
+    "ant! Great job!": 3,
+    "key": 1,
+    "bear": 2,
+    "grape! Great job!": 1,
+    "A! Nice tracing!": 3,
+    "R! Nice tracing!": 1,
+    "a! Nice tracing!": 3,
+    "r! Nice tracing!": 1,
+    "K! Nice tracing!": 4,
+    "k! Nice tracing!": 4,
+    "ant": 4
+  }
+}
