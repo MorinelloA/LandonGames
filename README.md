@@ -56,7 +56,7 @@ Type checks run in editors through `jsconfig.json`, capped at ES2021 so APIs new
 npx -p typescript tsc -p jsconfig.json
 ```
 
-`tools/art-sheet.html` shows every piece of art on one page: the cat, every face and pose, the places, the 24 Feelings scenes, the menu cards, bins and pads. `tools/content-sheet.html` lists everything the games ask and what counts as right, for a teacher or therapist to check: Sort It's prompts, the Feelings stories, the word and math levels, Counting's themes and Trace It's stroke order. Open either through the dev server (for example <http://localhost:8642/tools/content-sheet.html>); to share the content sheet, print it or save it as a PDF. `docs/ipad-checklist.md` lists what only a real iPad can show.
+`tools/art-sheet.html` shows every piece of art on one page: the cat, every face and pose, the places, the 24 Feelings scenes, the menu cards, bins and pads, and the app icon. `tools/content-sheet.html` lists everything the games ask and what counts as right, for a teacher or therapist to check: Sort It's prompts, the Feelings stories, the word and math levels, Counting's themes and Trace It's stroke order. Open either through the dev server (for example <http://localhost:8642/tools/content-sheet.html>); to share the content sheet, print it or save it as a PDF. `docs/ipad-checklist.md` lists what only a real iPad can show.
 
 ## Deploy it
 
@@ -98,6 +98,7 @@ The photos can be opened by anyone who knows their address (they're kept out of 
 | `css/style.css` | the page's styles; its colours mirror `js/art/theme.js` |
 | `sw.js`, `tools/stamp-sw.mjs` | offline play |
 | `tools/photos.py` | the photo pipeline |
+| `tools/app-icon.js`, `tools/make-icons.py` | the Home Screen icon |
 
 The vocabulary pictures are Microsoft's Fluent Emoji in the Flat style. To add one, give it a name and its emoji in `js/art/icons.js`, then copy it in from a local checkout of [fluentui-emoji](https://github.com/microsoft/fluentui-emoji) (the steps are at the top of the tool):
 
@@ -109,11 +110,13 @@ node tools/vendor-icons.mjs <path to the fluentui-emoji checkout>
 
 ## The app icon
 
-The Home Screen icon (a gold star) lives in `icons/`. To change it, edit the palette at the top of `tools/make-icons.py` and run it (needs `pip install pillow numpy`), then commit the PNGs:
+The Home Screen icon is the cat's face under the menu's bunting, on the menu's wall. `tools/app-icon.js` draws it from the game's own art, and `tools/make-icons.py` renders it into `icons/` at every size `index.html` and `manifest.webmanifest` use: 180, 192 and 512 px, a maskable 512 for Android, and a 32 px browser-tab icon of the face alone. To change it, edit `tools/app-icon.js`, run the script (needs `pip install playwright pillow` and `python -m playwright install chromium`), then restamp, commit the PNGs and publish:
 
 ```bash
 python tools/make-icons.py --preview
 ```
+
+`--preview` also writes `tools/preview.png` (not committed): the icon at Home Screen size on a light and a dark wallpaper. The art sheet shows it too.
 
 iOS caches the icon hard: delete the Home Screen shortcut and add it again to see a new one.
 
