@@ -11,7 +11,7 @@
 // Caches are named lg-…; the other apps on this site use mr- (Marble Run)
 // and pf- (Pictures), and each only ever touches its own.
 
-const VERSION = 'lg-1a30eadffa70';
+const VERSION = 'lg-87c4316edffa';
 const PHOTOS = 'lg-photos';
 const ASSETS = [
   './',

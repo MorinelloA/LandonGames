@@ -48,7 +48,9 @@ export function createPuzzle({ screenEl, levelEl, storageKey, onComplete }) {
     levelEl.textContent = size.value + " × " + size.value;
   }
 
+  // empty the board and tray, and drop any puzzle still being drawn
   function clear() {
+    buildId++;
     canvases.forEach(release);
     canvases = [];
     boardEl.innerHTML = "";
@@ -57,7 +59,8 @@ export function createPuzzle({ screenEl, levelEl, storageKey, onComplete }) {
 
   // draw(ctx, side) paints the picture onto a side x side canvas
   async function build(draw) {
-    const id = ++buildId;
+    clear();
+    const id = buildId;
     const n = size.value;
     const P = BOARD / n;
     const M = MARGIN * P;
@@ -65,12 +68,17 @@ export function createPuzzle({ screenEl, levelEl, storageKey, onComplete }) {
     placed = 0;
     errors = 0;
     renderLevel();
-    clear();
 
     const master = document.createElement("canvas");
     master.width = master.height = Math.round(BOARD * dpr);
-    await draw(master.getContext("2d"), master.width);
-    if (id !== buildId) { release(master); return; } // a newer puzzle started meanwhile
+    try {
+      await draw(master.getContext("2d"), master.width);
+    } catch (err) {
+      release(master);
+      if (id === buildId) throw err;
+      return; // this puzzle was left meanwhile, so its failure doesn't matter
+    }
+    if (id !== buildId) { release(master); return; } // left, or a newer puzzle started meanwhile
 
     const pieces = cutEdges(n);
 
