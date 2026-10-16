@@ -1,9 +1,8 @@
 /* ===== Picture Puzzle: the puzzle engine running on family photos =====
-   Photos live in the site's own /photos folder, so they deploy with the
-   site and show up on every device. Two ways to add them:
-   1. Name them 1.jpg, 2.jpg, 3.jpg ... and drop them in /photos (easiest)
-   2. Or keep a /photos/manifest.json listing any filenames you like
-*/
+   The photos live in the site's own /photos folder, made by
+   tools/photos.py from the originals in photos-src/ (see the README).
+   photos/manifest.json lists each photo with a small square thumbnail
+   and the point the puzzle's square is cropped around. */
 App.games.photopuzzle = (() => {
   const pickerEl = document.getElementById("photo-picker");
   const thumbsEl = document.getElementById("photo-thumbs");
@@ -19,105 +18,46 @@ App.games.photopuzzle = (() => {
     onComplete: () => showPicker(), // back to the photo gallery after each win
   });
 
-  let photoList = null; // discovered once per page load
+  let photoList = null; // read once per page load
 
+  // Version 2 manifests come from tools/photos.py; a plain array of file
+  // names (the old format) still works, minus thumbnails and focus points.
   async function discover() {
     if (photoList) return photoList;
-    // a manifest wins if present...
     try {
       const r = await fetch("photos/manifest.json", { cache: "no-cache" });
-      if (r.ok) {
-        const names = await r.json();
-        photoList = names.map((f) => "photos/" + f);
-        return photoList;
-      }
-    } catch (_) {}
-    // ...otherwise look for numbered files (1.jpg, 2.jpg, ...) and stop at
-    // the first missing number, so we don't probe for photos that aren't there
-    const exts = ["jpg", "jpeg", "png", "webp", "gif", "heic", "heif", "JPG", "HEIC"];
-    const found = [];
-    for (let i = 1; i <= 30; i++) {
-      const hits = await Promise.all(exts.map((e) =>
-        fetch(`photos/${i}.${e}`, { method: "HEAD" }).then((r) => (r.ok ? `photos/${i}.${e}` : null)).catch(() => null)
-      ));
-      const hit = hits.find(Boolean);
-      if (!hit) break;
-      found.push(hit);
+      const data = r.ok ? await r.json() : [];
+      const entries = Array.isArray(data)
+        ? data.map((f) => ({ src: f, thumb: f, focus: [0.5, 0.5] }))
+        : data.photos || [];
+      photoList = entries.map((e) => ({
+        src: "photos/" + e.src,
+        thumb: "photos/" + (e.thumb || e.src),
+        focus: e.focus || [0.5, 0.5],
+      }));
+    } catch (_) {
+      photoList = [];
     }
-    photoList = found;
     return photoList;
   }
 
-  /* ---- HEIC support ----
-     iPhone photos come as .heic, which only Safari decodes natively.
-     Everywhere else, lazy-load the vendored heic-to converter (libheif)
-     and turn the photo into a JPEG blob the browser can show. Converted
-     URLs are cached so each photo converts at most once per page load. */
-  let heicLib = null;
-  function loadHeicLib() {
-    if (typeof HeicTo === "function") return Promise.resolve();
-    if (!heicLib) {
-      heicLib = new Promise((res, rej) => {
-        const s = document.createElement("script");
-        s.src = "js/lib/heic-to.js";
-        s.onload = res;
-        s.onerror = rej;
-        document.head.appendChild(s);
-      });
-    }
-    return heicLib;
-  }
-
-  // conversions run one at a time — converting a whole gallery in parallel
-  // overwhelms both the connection and the wasm decoder
-  let convertChain = Promise.resolve();
-  function convertHeic(url) {
-    const job = convertChain.then(() =>
-      loadHeicLib()
-        .then(() => fetch(url))
-        .then((r) => r.blob())
-        .then((blob) => HeicTo({ blob, type: "image/jpeg", quality: 0.92 }))
-        .then((out) => URL.createObjectURL(Array.isArray(out) ? out[0] : out))
-    );
-    convertChain = job.catch(() => {}); // a failed job must not stall the queue
-    return job;
-  }
-
-  const heicCache = new Map();
-  function displayableUrl(url) {
-    if (!/\.hei[cf]$/i.test(url)) return Promise.resolve(url);
-    if (!heicCache.has(url)) {
-      heicCache.set(url, new Promise((res) => {
-        const probe = new Image();
-        probe.onload = () => res(url); // this browser decodes HEIC natively
-        probe.onerror = () => {
-          convertHeic(url)
-            .then(res)
-            .catch(() => { heicCache.delete(url); res(null); }); // failed — retry next time
-        };
-        probe.src = url;
-      }));
-    }
-    return heicCache.get(url);
-  }
-
-  // photos aren't square — crop the middle into a square for the board
-  function squareUrl(url) {
+  // the board is square: crop the photo's square around its focus point,
+  // the same square tools/photos.py used for the thumbnail
+  function squareUrl(photo) {
     return new Promise((res, rej) => {
       const img = new Image();
       img.onload = () => {
-        const s = Math.min(img.naturalWidth, img.naturalHeight);
+        const w = img.naturalWidth, h = img.naturalHeight, s = Math.min(w, h);
+        const left = Math.min(Math.max(photo.focus[0] * w - s / 2, 0), w - s);
+        const top = Math.min(Math.max(photo.focus[1] * h - s / 2, 0), h - s);
         const c = document.createElement("canvas");
         c.width = c.height = 900;
-        c.getContext("2d").drawImage(
-          img,
-          (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s,
-          0, 0, 900, 900
-        );
+        c.getContext("2d").drawImage(img, left, top, s, s, 0, 0, 900, 900);
         res(c.toDataURL("image/jpeg", 0.9));
+        c.width = c.height = 0; // let iPad Safari reclaim the canvas now
       };
       img.onerror = rej;
-      img.src = url;
+      img.src = photo.src;
     });
   }
 
@@ -128,24 +68,32 @@ App.games.photopuzzle = (() => {
     const photos = await discover();
     thumbsEl.innerHTML = "";
     emptyEl.classList.toggle("hidden", photos.length > 0);
-    photos.forEach((url) => {
-      const thumb = document.createElement("div");
+    photos.forEach((photo) => {
+      const thumb = document.createElement("button");
       thumb.className = "photo-thumb";
+      const img = document.createElement("img");
+      img.src = photo.thumb;
+      img.alt = "";
+      img.width = img.height = 160;
+      img.decoding = "async";
+      img.draggable = false;
+      img.onerror = () => thumb.remove(); // a missing photo just isn't offered
+      thumb.appendChild(img);
+      thumb.addEventListener("click", () => startPuzzle(photo));
       thumbsEl.appendChild(thumb);
-      displayableUrl(url).then((disp) => {
-        if (!disp) { thumb.remove(); return; } // undecodable photo — skip it
-        thumb.style.backgroundImage = `url(${disp})`;
-        thumb.addEventListener("click", () => startPuzzle(disp));
-      });
     });
   }
 
-  async function startPuzzle(url) {
+  async function startPuzzle(photo) {
     Sound.click();
     pickerEl.classList.add("hidden");
     wrapEl.classList.remove("hidden");
     backBtn.classList.remove("hidden");
-    core.build(await squareUrl(url));
+    try {
+      core.build(await squareUrl(photo));
+    } catch (_) {
+      showPicker(); // the photo didn't load: back to the gallery
+    }
   }
 
   backBtn.addEventListener("click", () => {

@@ -1,12 +1,15 @@
-[
-    "IMG_5153.jpeg",
-    "IMG_7742.png",
-    "IMG_8007.png",
-    "IMG_8130.png",
-    "IMG_8142.png",
-    "IMG_8210.png",
-    "IMG_8231.png",
-    "IMG_8642.png",
-    "IMG_9076.png",
-    "IMG_9083.png"
-]
+{
+  "version": 2,
+  "photos": [
+    {"id": "IMG_5153", "src": "IMG_5153.jpg?v=47c5e1b7", "thumb": "thumbs/IMG_5153.jpg?v=1005f25f", "w": 1206, "h": 902, "focus": [0.5, 0.5]},
+    {"id": "IMG_7742", "src": "IMG_7742.jpg?v=75dccbd7", "thumb": "thumbs/IMG_7742.jpg?v=75500f23", "w": 1200, "h": 1600, "focus": [0.5, 0.42]},
+    {"id": "IMG_8007", "src": "IMG_8007.jpg?v=881fc4a9", "thumb": "thumbs/IMG_8007.jpg?v=0d1ac609", "w": 1200, "h": 1600, "focus": [0.5, 0.42]},
+    {"id": "IMG_8130", "src": "IMG_8130.jpg?v=c0aa6079", "thumb": "thumbs/IMG_8130.jpg?v=52ec5ea2", "w": 1600, "h": 1200, "focus": [0.5, 0.5]},
+    {"id": "IMG_8142", "src": "IMG_8142.jpg?v=cd36b6e6", "thumb": "thumbs/IMG_8142.jpg?v=ec9a42f9", "w": 1600, "h": 1200, "focus": [0.5, 0.5]},
+    {"id": "IMG_8210", "src": "IMG_8210.jpg?v=a9a442cd", "thumb": "thumbs/IMG_8210.jpg?v=0cd7ef3a", "w": 1200, "h": 1600, "focus": [0.5, 0.59]},
+    {"id": "IMG_8231", "src": "IMG_8231.jpg?v=6ffb29f9", "thumb": "thumbs/IMG_8231.jpg?v=794af52a", "w": 1200, "h": 1600, "focus": [0.5, 0.42]},
+    {"id": "IMG_8642", "src": "IMG_8642.jpg?v=364042e2", "thumb": "thumbs/IMG_8642.jpg?v=18f9139b", "w": 1200, "h": 1600, "focus": [0.5, 0.42]},
+    {"id": "IMG_9076", "src": "IMG_9076.jpg?v=0d680889", "thumb": "thumbs/IMG_9076.jpg?v=1e7405ed", "w": 1200, "h": 1600, "focus": [0.5, 0.42]},
+    {"id": "IMG_9083", "src": "IMG_9083.jpg?v=8566b0a0", "thumb": "thumbs/IMG_9083.jpg?v=3efc1e6a", "w": 1200, "h": 1600, "focus": [0.5, 0.42]}
+  ]
+}

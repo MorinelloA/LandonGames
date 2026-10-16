@@ -5,3 +5,6 @@ desktop.ini
 
 # scratch output from tools/make-icons.py --preview
 tools/preview.png
+
+# Photo originals: tools/photos.py turns these into photos/
+photos-src/

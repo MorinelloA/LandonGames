@@ -44,11 +44,22 @@ available above that as room to grow.
 
 ## Adding family photos for Picture Puzzle
 
-Put photos in the `photos/` folder named `1.jpg`, `2.jpg`, `3.jpg`, … (up to 30 —
-`.png`, `.jpeg`, `.webp`, `.gif` also work), then re-upload the site. The game finds
-them automatically on every device. Photos are cropped to a centered square, so keep
-faces near the middle. To use your own filenames instead, list them in
-`photos/manifest.json` — see `photos/README.txt` for details.
+1. Put the original photos in `photos-src/` (any names; `.jpg`, `.png`, `.webp` and
+   iPhone `.heic` all work). That folder is git-ignored, so the originals never
+   reach the site or the repo.
+2. Double-click `tools/photos.bat` (or run `python tools/photos.py`). It needs Pillow,
+   plus `pillow-heif` for HEIC: `pip install pillow pillow-heif`.
+3. Commit and publish the site.
+
+The tool writes small JPEGs (longest side 1600 px, no location or camera data),
+320 px thumbnails for the gallery, and `photos/manifest.json`. Each puzzle is a
+square cut from the photo: the middle of landscape photos, a little above the
+middle of portrait ones. If a square misses someone's face, list the photo in
+`tools/photo-focus.json` with where the square should centre (x and y as
+fractions, e.g. `"IMG_8210": [0.5, 0.59]`) and run the tool again.
+
+The photos can be opened by anyone who knows their address, so only add ones
+you're happy to have on the web.
 
 ## Putting it on the iPad
 
