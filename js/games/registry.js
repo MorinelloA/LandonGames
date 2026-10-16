@@ -1,7 +1,6 @@
-// Every game in menu order, with the title shown in the top bar. `drawn`
-// marks the games redrawn in the storybook look; they get the cat in the
-// corner, unless the cat is already in the game (`noBuddy`). A game's id
-// is its menu card's data-game and its screen-<id>.
+// Every game in menu order, with the title shown in the top bar. Each has
+// the cat in the corner, unless the cat is already in the game (`noBuddy`).
+// A game's id is its menu card's data-game and its screen-<id>.
 import mathpop from "./mathpop.js";
 import spelling from "./spelling.js";
 import memory from "./memory.js";
@@ -16,18 +15,18 @@ import feelings from "./feelings.js";
 import trace from "./trace.js";
 
 export const GAME_LIST = [
-  { id: "mathpop", title: "Math Bubbles", game: mathpop, drawn: true },
-  { id: "spelling", title: "Word Builder", game: spelling, drawn: true },
-  { id: "memory", title: "Animal Match", game: memory, drawn: true },
-  { id: "simon", title: "Copy Cat", game: simon, drawn: true, noBuddy: true },
-  { id: "counting", title: "Counting Time", game: counting, drawn: true },
-  { id: "music", title: "Music Maker", game: music, drawn: true },
+  { id: "mathpop", title: "Math Bubbles", game: mathpop },
+  { id: "spelling", title: "Word Builder", game: spelling },
+  { id: "memory", title: "Animal Match", game: memory },
+  { id: "simon", title: "Copy Cat", game: simon, noBuddy: true },
+  { id: "counting", title: "Counting Time", game: counting },
+  { id: "music", title: "Music Maker", game: music },
   { id: "puzzle", title: "Puzzle Builder", game: puzzle },
-  { id: "maze", title: "Cheese Maze", game: maze, drawn: true },
+  { id: "maze", title: "Cheese Maze", game: maze },
   { id: "photopuzzle", title: "Picture Puzzle", game: photopuzzle },
-  { id: "sortit", title: "Sort It!", game: sortit, drawn: true },
-  { id: "feelings", title: "Feelings", game: feelings, drawn: true },
-  { id: "trace", title: "Trace It", game: trace, drawn: true },
+  { id: "sortit", title: "Sort It!", game: sortit },
+  { id: "feelings", title: "Feelings", game: feelings },
+  { id: "trace", title: "Trace It", game: trace },
 ];
 
 export const GAMES = Object.fromEntries(GAME_LIST.map((g) => [g.id, g.game]));

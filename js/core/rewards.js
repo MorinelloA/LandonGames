@@ -79,7 +79,7 @@ let celebrationTimer = null;
 
 // pictures in the words are left out: the cat is the picture
 export function showCelebration(text) {
-  celebrationText.textContent = text.replace(/[\p{Extended_Pictographic}️‍]/gu, "").trim();
+  celebrationText.textContent = text.replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, "").trim();
   celebrationEl.classList.remove("hidden");
   // restart the CSS animation
   card.style.animation = "none";

@@ -13,7 +13,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/classic.css">
 </head>
 <body>
 
@@ -92,26 +91,18 @@
     </section>
 
     <!-- ============ PUZZLE BUILDER ============ -->
-    <section id="screen-puzzle" class="screen classic">
-      <div class="game-header"><p class="game-hint">Drag the pieces to build the picture!</p></div>
-      <div class="puzzle-wrap">
-        <div id="puzzle-board" class="puzzle-board"></div>
-        <div id="puzzle-tray" class="puzzle-tray"></div>
-      </div>
+    <section id="screen-puzzle" class="screen">
+      <div class="backdrop"></div>
     </section>
 
     <!-- ============ PICTURE PUZZLE ============ -->
-    <section id="screen-photopuzzle" class="screen classic">
-      <div class="game-header"><p class="game-hint">Pick a photo, then drag the pieces to build it!</p></div>
+    <section id="screen-photopuzzle" class="screen">
+      <div class="backdrop"></div>
       <div id="photo-picker">
-        <p id="photo-empty" class="game-hint hidden">No photos yet! Grown-ups: put photos in the <b>photos-src</b> folder, run <b>tools/photos.bat</b>, and publish the site.</p>
+        <p id="photo-empty" class="panel hidden">No photos yet! Grown-ups: put photos in the <b>photos-src</b> folder, run <b>tools/photos.bat</b>, and publish the site.</p>
         <div id="photo-thumbs"></div>
       </div>
-      <div id="photo-wrap" class="puzzle-wrap hidden">
-        <div id="photo-board" class="puzzle-board"></div>
-        <div id="photo-tray" class="puzzle-tray"></div>
-      </div>
-      <button id="photo-back" class="chunky-btn small hidden">🖼️ Choose another photo</button>
+      <button id="photo-back" class="btn hidden" data-icon="photos">Photos</button>
     </section>
 
     <!-- ============ CHEESE MAZE ============ -->

@@ -28,7 +28,7 @@ export function enable(el, opts) {
     try { el.setPointerCapture(e.pointerId); } catch (_) {}
 
     const startX = e.clientX, startY = e.clientY;
-    const scale = screenPerUnit() || 1;
+    let scale = screenPerUnit() || 1;
     let moved = 0;
     let picked = false;
 
@@ -39,6 +39,9 @@ export function enable(el, opts) {
         picked = true;
         el.classList.add("dragging");
         el.style.transition = "none"; // track the finger 1:1 — no easing lag
+        // an element's own CSS scale multiplies its translate, so take it out
+        const own = parseFloat(getComputedStyle(el).scale);
+        scale = (screenPerUnit() || 1) * (own > 0 ? own : 1);
         if (opts.onPickup) opts.onPickup();
       }
       if (picked) el.style.transform = `translate(${dx / scale}px, ${dy / scale}px)`;
@@ -50,7 +53,6 @@ export function enable(el, opts) {
       el.removeEventListener("pointercancel", up);
       if (!picked) return; // it was a tap — let the click event do its thing
 
-      el.classList.remove("dragging");
       // suppress the ghost click that follows a real drag
       const stop = (ce) => { ce.stopImmediatePropagation(); ce.preventDefault(); };
       el.addEventListener("click", stop, true);
@@ -60,8 +62,10 @@ export function enable(el, opts) {
       // edge, Control Center), not that he let go here: never a drop.
       const cancelled = ev.type === "pointercancel";
 
-      // find the drop target under the dragged element's center
+      // find the drop target under the dragged element's center, measured
+      // while it's still where the finger left it
       const r = el.getBoundingClientRect();
+      el.classList.remove("dragging");
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       let target = null;
       for (const t of (!cancelled && opts.targets ? opts.targets() : [])) {

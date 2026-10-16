@@ -4,6 +4,8 @@ import { MOODS, POSES, faceSvg, personSvg } from "../js/art/people.js";
 import { PLACES, backdropSvg } from "../js/art/backdrops.js";
 import { storyScene } from "../js/art/scenes.js";
 import { STORIES } from "../js/logic/feelings.js";
+import { CARD_GAMES, cardSvg } from "../js/art/cards.js";
+import { binSvg, padSvg } from "../js/art/gameart.js";
 
 const sheet = document.getElementById("sheet");
 
@@ -36,7 +38,9 @@ add("Grandma", [["stand", personSvg({ who: "grandma", size: 220 })], ["handsOut"
 // the dashed box is the stage; everything outside it is bleed
 const outline = '<rect x="0" y="0" width="1133" height="640" fill="none" stroke="#4A3426" stroke-width="4" stroke-dasharray="18 12"/>';
 add("Places", Object.keys(PLACES).map((name) => [name, backdropSvg(name).replace(/<\/svg>$/, outline + "</svg>")]), "wide");
+add("Menu cards", CARD_GAMES.map((game) => [game, cardSvg(game)]));
+add("Sort It bins", ["toybox", "toolbox", "basket"].map((kind) => [kind, binSvg(kind)]));
+add("Copy Cat pads", [0, 1, 2, 3].map((i) => [String(i), `<div style="background:#ccc;border-radius:16px">${padSvg(i, 110)}</div>`]));
 add("Feelings stories", STORIES.map((s) => [`${s.id} (${s.answer})`, storyScene(s.id).replace(/<\/svg>$/, outline + "</svg>")]), "wide");
 
-// later sections register themselves from art-sheet-*.js as the art grows
 for (const [title, cells, cls] of sections) section(title, cells, cls);

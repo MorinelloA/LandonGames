@@ -38,7 +38,7 @@ export function openGame(name) {
   const info = list.find((g) => g.id === name);
   titleText.textContent = info.title;
   titleBadge.textContent = "";
-  Buddy.show(!!info.drawn && !info.noBuddy);
+  Buddy.show(!info.noBuddy);
   show(name);
   games[name].start();
 }

@@ -1,26 +1,27 @@
-// Picture Puzzle: the puzzle engine running on family photos. The photos
-// live in the site's own /photos folder, made by tools/photos.py from the
-// originals in photos-src/ (see the README). photos/manifest.json lists
-// each photo with a small square thumbnail and the point the puzzle's
-// square is cropped around.
+// Picture Puzzle: the jigsaw on family photos. The photos live in the
+// site's own /photos folder, made by tools/photos.py from the originals in
+// photos-src/ (see the README). photos/manifest.json lists each photo with
+// a small square thumbnail and the point the puzzle's square is cut around.
+// Pick a photo from the wall, then build it.
 import * as Sound from "../core/sound.js";
-import { createPuzzle } from "./puzzle-core.js";
+import { createPuzzle, loadImage } from "./puzzle-core.js";
+import { backdropSvg } from "../art/backdrops.js";
 
+const screen = document.getElementById("screen-photopuzzle");
 const pickerEl = document.getElementById("photo-picker");
 const thumbsEl = document.getElementById("photo-thumbs");
 const emptyEl = document.getElementById("photo-empty");
-const wrapEl = document.getElementById("photo-wrap");
 const backBtn = document.getElementById("photo-back");
 
 const puzzle = createPuzzle({
-  boardEl: document.getElementById("photo-board"),
-  trayEl: document.getElementById("photo-tray"),
+  screenEl: screen,
   levelEl: document.getElementById("title-badge"),
   storageKey: "landon-photo-level",
-  onComplete: () => showPicker(), // back to the photo gallery after each win
+  onComplete: () => showPicker(), // back to the photo wall after each win
 });
 
 let photoList = null; // read once per page load
+let drawn = false;
 
 // Version 2 manifests come from tools/photos.py; a plain array of file
 // names (the old format) still works, minus thumbnails and focus points.
@@ -43,40 +44,34 @@ async function discover() {
   return photoList;
 }
 
-// the board is square: crop the photo's square around its focus point,
-// the same square tools/photos.py used for the thumbnail
-function squareUrl(photo) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => {
-      const w = img.naturalWidth, h = img.naturalHeight, s = Math.min(w, h);
-      const left = Math.min(Math.max(photo.focus[0] * w - s / 2, 0), w - s);
-      const top = Math.min(Math.max(photo.focus[1] * h - s / 2, 0), h - s);
-      const c = document.createElement("canvas");
-      c.width = c.height = 900;
-      c.getContext("2d").drawImage(img, left, top, s, s, 0, 0, 900, 900);
-      res(c.toDataURL("image/jpeg", 0.9));
-      c.width = c.height = 0; // let iPad Safari reclaim the canvas now
-    };
-    img.onerror = rej;
-    img.src = photo.src;
-  });
+// the photo's square around its focus point: the same square as its thumbnail
+function drawPhoto(photo) {
+  return async (ctx, S) => {
+    const img = await loadImage(photo.src);
+    const w = img.naturalWidth, h = img.naturalHeight, s = Math.min(w, h);
+    const left = Math.min(Math.max(photo.focus[0] * w - s / 2, 0), w - s);
+    const top = Math.min(Math.max(photo.focus[1] * h - s / 2, 0), h - s);
+    ctx.drawImage(img, left, top, s, s, 0, 0, S, S);
+  };
 }
 
 async function showPicker() {
-  wrapEl.classList.add("hidden");
+  puzzle.clear();
+  puzzle.show(false);
   backBtn.classList.add("hidden");
   pickerEl.classList.remove("hidden");
   const photos = await discover();
   thumbsEl.innerHTML = "";
   emptyEl.classList.toggle("hidden", photos.length > 0);
-  photos.forEach((photo) => {
+  photos.forEach((photo, i) => {
     const thumb = document.createElement("button");
     thumb.className = "photo-thumb";
+    thumb.setAttribute("aria-label", "photo " + (i + 1));
+    thumb.style.setProperty("--tilt", ((i * 37) % 9) - 4 + "deg"); // pinned up a little crooked
     const img = document.createElement("img");
     img.src = photo.thumb;
     img.alt = "";
-    img.width = img.height = 160;
+    img.width = img.height = 138;
     img.decoding = "async";
     img.draggable = false;
     img.onerror = () => thumb.remove(); // a missing photo just isn't offered
@@ -89,12 +84,12 @@ async function showPicker() {
 async function startPuzzle(photo) {
   Sound.click();
   pickerEl.classList.add("hidden");
-  wrapEl.classList.remove("hidden");
   backBtn.classList.remove("hidden");
+  puzzle.show(true);
   try {
-    puzzle.build(await squareUrl(photo));
+    await puzzle.build(drawPhoto(photo));
   } catch (_) {
-    showPicker(); // the photo didn't load: back to the gallery
+    showPicker(); // the photo didn't load: back to the wall
   }
 }
 
@@ -105,12 +100,17 @@ backBtn.addEventListener("click", () => {
 
 export default {
   start() {
+    if (!drawn) {
+      screen.querySelector(".backdrop").innerHTML = backdropSvg("living");
+      drawn = true;
+    }
     puzzle.running = true;
     puzzle.renderLevel();
     showPicker();
   },
   stop() {
     puzzle.running = false;
+    puzzle.clear();
   },
   hint() {
     if (pickerEl.classList.contains("hidden")) puzzle.hint();

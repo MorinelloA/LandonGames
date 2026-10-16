@@ -1,89 +1,76 @@
-// Puzzle Builder: drag the pieces to rebuild a busy picture. The grid
-// grows from 2x2 to 6x6 after clean solves and shrinks after hard ones.
+// Puzzle Builder: drag the jigsaw pieces to rebuild a busy picture. The
+// grid grows from 2x2 to 6x6 after clean solves and shrinks after hard
+// ones. Each picture is a place with a crowd of its things — farm animals,
+// sea creatures, sweets — one in every cell of a 6x6 grid, so every piece
+// has something to recognise, even at 6x6.
 import { later } from "../core/session.js";
 import { pick } from "../core/rng.js";
-import { createPuzzle } from "./puzzle-core.js";
+import { createPuzzle, loadImage } from "./puzzle-core.js";
+import { PLACES, backdropSvg } from "../art/backdrops.js";
+import { iconUrl } from "../art/icons.js";
+import { svg } from "../art/svg.js";
 
-/* Full collage scenes rather than one central emoji, so every piece has
-   distinct content to recognize — even on a 6x6 grid. */
+const screen = document.getElementById("screen-puzzle");
+
 const THEMES = [
-  { bg: ["#d6ecff", "#e9ffd9"], focal: "🚜", items: ["🐄", "🐖", "🐓", "🌻", "🌾", "🐑", "🦆", "🐇", "🌽", "🍎"] },
-  { bg: ["#dfe4ff", "#f7e2ff"], focal: "🚀", items: ["⭐", "🪐", "👩‍🚀", "🛸", "🌙", "☄️", "🌟", "🌍", "🔭", "👽"] },
-  { bg: ["#d9f6ff", "#e6fff4"], focal: "🐳", items: ["🐠", "🐙", "🦀", "🐬", "🐚", "🦈", "🪸", "🐡", "🐢", "⛵"] },
-  { bg: ["#e4ffe0", "#fff7d9"], focal: "🦁", items: ["🐒", "🦜", "🐍", "🌺", "🦋", "🐸", "🌴", "🐯", "🦒", "🐘"] },
-  { bg: ["#fff0f5", "#fffbe0"], focal: "🍨", items: ["🍭", "🧁", "🍩", "🍪", "🍓", "🍰", "🍬", "🎂", "🍫", "🥞"] },
-  { bg: ["#e8f4ff", "#ffeede"], focal: "🚂", items: ["🚗", "🚌", "🚁", "🚒", "🚓", "✈️", "🚲", "🚦", "⛽", "🛴"] },
+  { place: "park", focal: "tractor", items: ["cow", "pig", "rooster", "sunflower", "rice", "sheep", "duck", "rabbit", "corn", "apple"] },
+  { place: "space", focal: "rocket", items: ["star", "planet", "astronaut", "ufo", "moon", "comet", "glowing_star", "globe", "telescope", "alien"] },
+  { place: "sea", focal: "spouting_whale", items: ["tropical_fish", "octopus", "crab", "dolphin", "shell", "shark", "coral", "blowfish", "turtle", "boat"] },
+  { place: "park", focal: "lion", items: ["monkey", "parrot", "snake", "hibiscus", "butterfly", "frog", "palm", "tiger", "giraffe", "elephant"] },
+  { place: "party", focal: "ice_cream_bowl", items: ["lollipop", "cupcake", "doughnut", "cookie", "strawberry", "shortcake", "candy", "cake", "chocolate", "pancakes"] },
+  { place: "station", focal: "train", items: ["car", "bus", "helicopter", "fire_engine", "police_car", "airplane", "bicycle", "traffic_light", "fuel_pump", "scooter"] },
 ];
 
-function makeScene() {
-  const S = 600;
+async function drawScene(ctx, S) {
   const theme = pick(THEMES);
-  const c = document.createElement("canvas");
-  c.width = S;
-  c.height = S;
-  const g = c.getContext("2d");
-
-  const grad = g.createLinearGradient(0, 0, S, S);
-  grad.addColorStop(0, theme.bg[0]);
-  grad.addColorStop(1, theme.bg[1]);
-  g.fillStyle = grad;
-  g.fillRect(0, 0, S, S);
-
-  // soft colorful blobs so even emoji-free patches look distinct
-  const blobColors = ["#ffffff", "#ffe9a8", "#ffd3e0", "#cdeffd", "#d8f8d8", "#eadcff"];
-  for (let i = 0; i < 16; i++) {
-    g.globalAlpha = 0.25 + Math.random() * 0.3;
-    g.fillStyle = pick(blobColors);
-    g.beginPath();
-    g.arc(Math.random() * S, Math.random() * S, S * (0.04 + Math.random() * 0.09), 0, Math.PI * 2);
-    g.fill();
+  // the place, cropped to a square from the middle of the stage
+  const square = svg(640, 640, PLACES[theme.place](), { viewBox: "246 0 640 640" });
+  const url = URL.createObjectURL(new Blob([square], { type: "image/svg+xml" }));
+  try {
+    ctx.drawImage(await loadImage(url), 0, 0, S, S);
+  } finally {
+    URL.revokeObjectURL(url);
   }
-  g.globalAlpha = 1;
-
-  g.textAlign = "center";
-  g.textBaseline = "middle";
-
-  // one item in EVERY cell of a jittered 6x6 grid (matching the biggest
-  // puzzle size) — every piece is guaranteed recognizable content
-  const GRID = 6;
-  const cell = S / GRID;
+  const ids = [...new Set([...theme.items, theme.focal])];
+  const loaded = await Promise.all(ids.map((id) => loadImage(iconUrl(id))));
+  const imgs = new Map(ids.map((id, i) => [id, loaded[i]]));
+  const GRID = 6, cell = S / GRID;
   for (let gy = 0; gy < GRID; gy++) {
     for (let gx = 0; gx < GRID; gx++) {
-      const size = cell * (0.6 + Math.random() * 0.35);
-      const x = gx * cell + cell * (0.35 + Math.random() * 0.3);
-      const y = gy * cell + cell * (0.35 + Math.random() * 0.3);
-      g.save();
-      g.translate(x, y);
-      g.rotate((Math.random() - 0.5) * 0.8);
-      g.font = size + "px serif";
-      g.fillText(pick(theme.items), 0, 0);
-      g.restore();
+      const size = cell * (0.62 + Math.random() * 0.3);
+      ctx.save();
+      ctx.translate(gx * cell + cell * (0.4 + Math.random() * 0.2), gy * cell + cell * (0.4 + Math.random() * 0.2));
+      ctx.rotate((Math.random() - 0.5) * 0.7);
+      ctx.drawImage(imgs.get(pick(theme.items)), -size / 2, -size / 2, size, size);
+      ctx.restore();
     }
   }
-
-  g.font = S * 0.3 + "px serif";
-  g.fillText(theme.focal, S / 2, S * 0.52);
-  const url = c.toDataURL();
-  c.width = c.height = 0; // let iPad Safari reclaim the canvas now
-  return url;
+  const big = S * 0.38;
+  ctx.drawImage(imgs.get(theme.focal), (S - big) / 2, (S - big) / 2, big, big);
 }
 
 const puzzle = createPuzzle({
-  boardEl: document.getElementById("puzzle-board"),
-  trayEl: document.getElementById("puzzle-tray"),
+  screenEl: screen,
   levelEl: document.getElementById("title-badge"),
   storageKey: "landon-puzzle-level",
-  onComplete: () => puzzle.build(makeScene()),
+  onComplete: () => puzzle.build(drawScene),
 });
+
+let drawn = false;
 
 export default {
   start() {
+    if (!drawn) {
+      screen.querySelector(".backdrop").innerHTML = backdropSvg("playroom");
+      drawn = true;
+    }
     puzzle.running = true;
     puzzle.renderLevel();
-    later(() => puzzle.build(makeScene()));
+    later(() => puzzle.build(drawScene));
   },
   stop() {
     puzzle.running = false;
+    puzzle.clear();
   },
   hint() {
     puzzle.hint();
