@@ -56,7 +56,7 @@ Type checks run in editors through `jsconfig.json`, capped at ES2021 so APIs new
 npx -p typescript tsc -p jsconfig.json
 ```
 
-`tools/art-sheet.html` shows every piece of art on one page: the cat, every face and pose, the places, the 24 Feelings scenes, the menu cards, bins and pads. `docs/ipad-checklist.md` lists what only a real iPad can show.
+`tools/art-sheet.html` shows every piece of art on one page: the cat, every face and pose, the places, the 24 Feelings scenes, the menu cards, bins and pads. `tools/content-sheet.html` lists everything the games ask and what counts as right, for a teacher or therapist to check: Sort It's prompts, the Feelings stories, the word and math levels, Counting's themes and Trace It's stroke order. Open either through the dev server (for example <http://localhost:8642/tools/content-sheet.html>); to share the content sheet, print it or save it as a PDF. `docs/ipad-checklist.md` lists what only a real iPad can show.
 
 ## Deploy it
 

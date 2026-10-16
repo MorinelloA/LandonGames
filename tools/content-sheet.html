@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content sheet — Landon's Game Room</title>
+<style>
+  @font-face {
+    font-family: "Fredoka";
+    src: url("../fonts/fredoka-latin.woff2") format("woff2");
+    font-weight: 300 700;
+    font-display: block;
+  }
+  :root { --paper: #FFF6E9; --cream: #FFFBF4; --ink: #4A3426; --soft: #7C6352; --line: #E8D2B6; }
+  body { margin: 0; padding: 28px 36px 60px; background: var(--paper); color: var(--ink);
+         font: 16px/1.45 "Fredoka", ui-rounded, system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 34px; margin: 0 0 6px; }
+  h2 { font-size: 26px; margin: 44px 0 6px; padding-top: 14px; border-top: 3px solid var(--line); }
+  h3 { font-size: 19px; margin: 26px 0 8px; }
+  p { margin: 6px 0; max-width: 820px; }
+  .soft { color: var(--soft); }
+  nav { margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  nav a { color: var(--ink); font-weight: 600; }
+  table { border-collapse: collapse; width: 100%; background: var(--cream); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { font-size: 14px; color: var(--soft); font-weight: 600; background: #F8EBDA; }
+  tr:last-child td { border-bottom: none; }
+  .pics { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+  .pic { display: inline-flex; flex-direction: column; align-items: center; font-size: 13px; color: var(--soft); min-width: 52px; }
+  .pic img { display: block; margin-bottom: 2px; }
+  .pic.no-art { justify-content: flex-end; min-height: 62px; font-style: italic; }
+  .scene svg { display: block; width: 230px; height: auto; border-radius: 8px; }
+  .face { display: inline-flex; flex-direction: column; align-items: center; font-size: 14px; }
+  .glyphs { display: flex; flex-wrap: wrap; gap: 10px; }
+  .glyph { background: var(--cream); border-radius: 10px; padding: 4px; }
+  .glyph svg { display: block; }
+  .none { color: var(--soft); }
+  @media print {
+    body { background: #fff; padding: 0; font-size: 12px; }
+    nav { display: none; }
+    h2 { break-before: page; border-top: none; margin-top: 0; }
+    h2:first-of-type { break-before: auto; }
+    table { background: #fff; }
+    tr, .glyph { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>Content sheet</h1>
+<p>Everything the games ask, and what counts as a right answer, for a teacher or therapist to check. It's drawn from the games' own data, so it always matches what's on the iPad. To share it, print it or save it as a PDF from the browser's Print menu.</p>
+<nav id="toc"></nav>
+<div id="sheet"></div>
+</main>
+<script type="module" src="content-sheet.js"></script>
+</body>
+</html>
