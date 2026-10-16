@@ -120,6 +120,17 @@ python tools/make-icons.py --preview
 
 iOS caches the icon hard: delete the Home Screen shortcut and add it again to see a new one.
 
+## Notes for tonyt908.com
+
+The screenshots and walkthrough video of the game on tonyt908.com come from `tools/capture_screens.py` and `tools/record_walkthroughs.py` in `C:\Repos\tonyt908`, run against this repo's dev server on port 8642. They find their way through the game by the things below, so renaming or reshaping one breaks them with no error here; change those tools along with it.
+
+- The service worker stays off on 127.0.0.1 (`js/main.js`), so the tools always get the files on disk.
+- Menu: `.game-card[data-game=…]`, and `#home-btn` to go back to it.
+- Copy Cat: `#simon-start`; the four `.simon-pad` buttons, in pad order, have the `lit` class while lit; `#title-badge` reads "Pattern N"; `#simon-says` starts with "Your turn!" when the player's turn comes. The screenshot is timed to the first pad, which lights 700 ms after Start.
+- Math Bubbles: `#math-problem` holds the two numbers, the sign (+, − or ×) and a "?" until it's answered; `.bubble[data-value]`, where tapping a bubble answers; `#math-drop`.
+- Cheese Maze: `#maze-board`, whose inline width is the board's and whose paths sit inside a 14 px frame (`PAD` in `js/games/maze.js`); its walls stay the first `<path>` in its SVG, with `M x y H…` for a cell's top wall and `M x y V…` for its left wall; `#title-badge` reads "Level N"; `SIZES` and `solve` exported from `js/logic/maze.js`.
+- Feelings: `STORIES` exported from `js/logic/feelings.js`; `#feel-sentence` shows a story's `text` exactly; `.face-card[data-feeling=…]`; `#feel-drop`.
+
 ## Licences
 
 The vocabulary pictures are Fluent Emoji, © Microsoft, MIT licence (`vendor/fluent-emoji-flat/LICENSE`). Fredoka is under the SIL Open Font License (`fonts/OFL.txt`).
