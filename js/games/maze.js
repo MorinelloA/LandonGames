@@ -174,14 +174,14 @@ App.games.maze = (() => {
       level++;
       saveLevel();
     }
-    setTimeout(() => running && build(), 2400);
+    App.later(build, 2400);
   }
 
   return {
     start() {
       running = true;
       renderLevel();
-      setTimeout(() => running && build(), 0);
+      App.later(build);
     },
     stop() {
       running = false;

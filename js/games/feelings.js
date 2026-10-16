@@ -135,7 +135,7 @@ App.games.feelings = (() => {
         Sound.success();
       }
       current = null;
-      setTimeout(() => running && makeRound(), 1800);
+      App.later(makeRound, 1800);
     } else {
       hadError = true;
       cleanStreak = 0;
@@ -164,7 +164,7 @@ App.games.feelings = (() => {
       missStreak = 0;
       deck = [];
       renderLevel();
-      setTimeout(() => running && makeRound(), 0);
+      App.later(makeRound);
     },
     stop() {
       running = false;

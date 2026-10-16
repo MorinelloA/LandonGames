@@ -79,7 +79,7 @@ const PuzzleCore = (() => {
       if (errors <= 1 && n < maxN) n++;
       else if (errors >= n * n && n > minN) n--;
       save();
-      setTimeout(() => running && onComplete(), 2400);
+      App.later(onComplete, 2400);
     }
 
     return {
@@ -189,7 +189,7 @@ App.games.puzzle = (() => {
     start() {
       core.running = true;
       core.renderLevel();
-      setTimeout(() => core.running && core.build(PuzzleScenes.makeScene()), 0);
+      App.later(() => core.build(PuzzleScenes.makeScene()));
     },
     stop() {
       core.running = false;

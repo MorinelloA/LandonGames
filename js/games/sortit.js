@@ -130,7 +130,7 @@ App.games.sortit = (() => {
       } else {
         Sound.success();
       }
-      setTimeout(() => running && makeRound(), 1100);
+      App.later(makeRound, 1100);
     } else {
       card.classList.add("wrong");
       setTimeout(() => card.classList.remove("wrong"), 450);
@@ -148,7 +148,7 @@ App.games.sortit = (() => {
       running = true;
       solved = 0;
       modeIdx = Math.floor(Math.random() * MODES.length);
-      setTimeout(() => running && makeRound(), 0);
+      App.later(makeRound);
     },
     stop() {
       running = false;

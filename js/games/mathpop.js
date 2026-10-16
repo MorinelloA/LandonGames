@@ -143,7 +143,7 @@ App.games.mathpop = (() => {
       } else {
         Sound.success();
       }
-      setTimeout(() => running && makeProblem(), 900);
+      App.later(makeProblem, 900);
     } else {
       winStreak = 0;
       missStreak++;
@@ -165,7 +165,7 @@ App.games.mathpop = (() => {
       missStreak = 0;
       solved = 0;
       renderLevel();
-      setTimeout(() => running && makeProblem(), 0);
+      App.later(makeProblem);
     },
     stop() {
       running = false;

@@ -97,9 +97,9 @@ App.games.counting = (() => {
     if (n === target) {
       answered = true;
       Sound.success();
-      setTimeout(() => Sound.speak(target + "! That's right!"), 200);
+      App.later(() => Sound.speak(target + "! That's right!"), 200);
       App.awardStars(1, { message: target + "! 🎉" });
-      setTimeout(() => running && newRound(), 2000);
+      App.later(newRound, 2000);
     } else {
       btn.classList.add("wrong");
       setTimeout(() => btn.classList.remove("wrong"), 450);
@@ -110,7 +110,7 @@ App.games.counting = (() => {
   return {
     start() {
       running = true;
-      setTimeout(() => running && newRound(), 0);
+      App.later(newRound);
     },
     stop() {
       running = false;

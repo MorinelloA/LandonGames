@@ -51,16 +51,16 @@ App.games.memory = (() => {
       const a = firstPick.btn;
       firstPick = null;
       matched++;
-      setTimeout(() => {
+      App.later(() => {
         a.classList.add("matched");
         btn.classList.add("matched");
         Sound.success();
         if (matched === animals.length) {
-          setTimeout(() => {
+          App.later(() => {
             Sound.fanfare();
             App.awardStars(3, { message: "You found them all! 🏆" });
             Sound.speak("You found all the animals! Amazing!");
-            setTimeout(() => running && build(), 2300);
+            App.later(build, 2300);
           }, 600);
         }
       }, 450);
@@ -71,7 +71,7 @@ App.games.memory = (() => {
       firstPick = null;
       // no freeze here — flipping non-matching pairs is how a memory game
       // is played, not a mistake. Just a silent flip-back.
-      setTimeout(() => {
+      App.later(() => {
         a.classList.remove("flipped");
         btn.classList.remove("flipped");
         locked = false;
@@ -108,7 +108,7 @@ App.games.memory = (() => {
       if (!pair) return;
       locked = true;
       pair.forEach((c) => c.classList.add("flipped"));
-      setTimeout(() => {
+      App.later(() => {
         pair.forEach((c) => c.classList.remove("flipped"));
         locked = false;
       }, 1300);

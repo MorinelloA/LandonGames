@@ -73,6 +73,17 @@ const App = (() => {
     }
   }
 
+  /* ---- Per-visit timers ----
+     A game's pending steps (the next round, a rebuild, a spoken line)
+     belong to the visit that scheduled them. Leaving or reopening a game
+     starts a new visit, so a step left over from the old one never fires
+     into the new one. */
+  let visit = 0;
+  function later(fn, ms = 0) {
+    const mine = visit;
+    return setTimeout(() => { if (mine === visit) fn(); }, ms);
+  }
+
   /* ---- Navigation ---- */
   const homeBtn = document.getElementById("home-btn");
   const helpBtn = document.getElementById("help-btn");
@@ -89,6 +100,7 @@ const App = (() => {
     Sound.ensure();
     Sound.click();
     if (currentGame && games[currentGame].stop) games[currentGame].stop();
+    visit++;
     currentGame = name;
     show(name);
     games[name].start();
@@ -97,6 +109,7 @@ const App = (() => {
   function goHome() {
     Sound.click();
     if (currentGame && games[currentGame].stop) games[currentGame].stop();
+    visit++;
     currentGame = null;
     Sound.hush();
     show("menu");
@@ -151,6 +164,6 @@ const App = (() => {
 
   renderStars();
 
-  return { games, awardStars, showCelebration, confettiBurst, shuffle, goHome, freeze,
+  return { games, awardStars, showCelebration, confettiBurst, shuffle, goHome, freeze, later,
            get frozen() { return frozen; } };
 })();

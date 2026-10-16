@@ -65,7 +65,7 @@ App.games.music = (() => {
         if (songPos >= song.length) {
           song = null;
           clearSongButtons();
-          setTimeout(() => {
+          App.later(() => {
             Sound.fanfare();
             App.awardStars(2, { message: "You played the song! 🎶" });
             hintEl.textContent = "Tap the bars to make music!";

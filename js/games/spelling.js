@@ -125,7 +125,7 @@ App.games.spelling = (() => {
 
   function wordDone() {
     Sound.success();
-    setTimeout(() => Sound.speak(word + "! Great job!"), 250);
+    App.later(() => Sound.speak(word + "! Great job!"), 250);
 
     // adapt: three perfect words in a row → harder; a really tough word → easier
     if (errors === 0) {
@@ -137,7 +137,7 @@ App.games.spelling = (() => {
         saveLevel();
         App.awardStars(2, { message: "Level " + level + "! 🚀" });
         Sound.speak("Level up!");
-        setTimeout(() => running && nextWord(), 2100);
+        App.later(nextWord, 2100);
         return;
       }
     } else {
@@ -149,7 +149,7 @@ App.games.spelling = (() => {
       }
     }
     App.awardStars(1, { message: word.toUpperCase() + "! 🌟" });
-    setTimeout(() => running && nextWord(), 1900);
+    App.later(nextWord, 1900);
   }
 
   hearBtn.addEventListener("click", () => {

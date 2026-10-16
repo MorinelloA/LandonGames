@@ -265,7 +265,7 @@ App.games.trace = (() => {
       }
       charIdx++;
     }
-    setTimeout(() => running && buildChar(), 1800);
+    App.later(buildChar, 1800);
   }
 
   /* finger tracking on the whole stage */
@@ -309,7 +309,7 @@ App.games.trace = (() => {
     start() {
       running = true;
       completedChars = 0;
-      setTimeout(() => running && setMode("abc"), 0);
+      App.later(() => setMode("abc"));
     },
     stop() {
       running = false;
