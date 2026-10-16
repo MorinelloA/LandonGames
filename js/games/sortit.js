@@ -18,31 +18,37 @@ App.games.sortit = (() => {
   };
 
   // ---- function: "Which one do you use to ___?" ----
+  // `maybe` items answer the question too (you ride in a car), so they're
+  // never offered as the wrong choice
   const FUNCTIONS = [
-    { prompt: "Which one cuts?", say: "Which one do you use to cut?", correct: ["✂️"] },
-    { prompt: "Which one do you drink from?", say: "Which one do you drink from?", correct: ["☕", "🥛", "🧃"] },
-    { prompt: "Which one do you sleep in?", say: "Which one do you sleep in?", correct: ["🛏️"] },
-    { prompt: "Which one do you write with?", say: "Which one do you write with?", correct: ["✏️", "🖍️"] },
-    { prompt: "Which one do you eat with?", say: "Which one do you eat with?", correct: ["🍴", "🥄"] },
-    { prompt: "Which one do you ride?", say: "Which one do you ride?", correct: ["🚲", "🛴"] },
-    { prompt: "Which one tells time?", say: "Which one tells the time?", correct: ["⏰", "⌚"] },
-    { prompt: "Which one do you brush teeth with?", say: "Which one do you brush your teeth with?", correct: ["🪥"] },
-    { prompt: "Which one do you wear on your feet?", say: "Which one do you wear on your feet?", correct: ["👟", "🧦"] },
-    { prompt: "Which one opens a door?", say: "Which one opens a door?", correct: ["🔑"] },
-    { prompt: "Which one takes pictures?", say: "Which one takes pictures?", correct: ["📷"] },
-    { prompt: "Which one do you sweep with?", say: "Which one do you sweep with?", correct: ["🧹"] },
+    { prompt: "Which one cuts?", say: "Which one do you use to cut?", correct: ["✂️"], maybe: ["🔪"] },
+    { prompt: "Which one do you drink from?", say: "Which one do you drink from?", correct: ["☕", "🥛", "🧃"], maybe: ["🍼", "🥤"] },
+    { prompt: "Which one do you sleep in?", say: "Which one do you sleep in?", correct: ["🛏️"], maybe: ["🛋️", "⛺"] },
+    { prompt: "Which one do you write with?", say: "Which one do you write with?", correct: ["✏️", "🖍️"], maybe: ["🖊️"] },
+    { prompt: "Which one do you eat with?", say: "Which one do you eat with?", correct: ["🍴", "🥄"], maybe: ["🥢"] },
+    { prompt: "Which one do you ride?", say: "Which one do you ride?", correct: ["🚲", "🛴"], maybe: ["🚗", "🚌", "🚂", "✈️", "⛵", "🚁", "🚒", "🛹", "🐴"] },
+    { prompt: "Which one tells time?", say: "Which one tells the time?", correct: ["⏰", "⌚"], maybe: ["📱"] },
+    { prompt: "Which one do you brush teeth with?", say: "Which one do you brush your teeth with?", correct: ["🪥"], maybe: [] },
+    { prompt: "Which one do you wear on your feet?", say: "Which one do you wear on your feet?", correct: ["👟", "🧦"], maybe: ["👢", "🩴"] },
+    { prompt: "Which one opens a door?", say: "Which one opens a door?", correct: ["🔑"], maybe: [] },
+    { prompt: "Which one takes pictures?", say: "Which one takes pictures?", correct: ["📷"], maybe: ["📱"] },
+    { prompt: "Which one do you sweep with?", say: "Which one do you sweep with?", correct: ["🧹"], maybe: [] },
   ];
-  const FUNCTION_DISTRACTORS = ["⚽", "🎈", "🧸", "🌸", "🍎", "🚗", "📚", "🎩", "🪁", "🥁", "🕶️", "🛋️"];
+  // things none of the questions above is about
+  const FUNCTION_DISTRACTORS = ["⚽", "🎈", "🧸", "🌸", "🔔", "📚", "🎩", "🪁", "🥁", "🕶️", "🧩", "🌳"];
 
-  // ---- feature: "Which one is ___?" — distractors come from other features ----
+  // ---- feature: "Which one is ___?" ----
+  // The wrong choices come only from the opposite feature, so they can never
+  // also be right (a snail is little too). "dry" is only ever a wrong choice.
   const FEATURES = [
-    { name: "cold", items: ["🧊", "❄️", "⛄", "🍦"] },
-    { name: "hot", items: ["🔥", "☀️", "🌶️", "🍲"] },
-    { name: "wet", items: ["💧", "🌧️", "🌊", "🛁"] },
-    { name: "fast", items: ["🚀", "🏎️", "⚡", "🐆"] },
-    { name: "slow", items: ["🐌", "🐢", "🦥"] },
-    { name: "big", items: ["🐘", "🐳", "🏔️", "🦕"] },
-    { name: "little", items: ["🐜", "🐭", "🐞", "🦐"] },
+    { name: "cold", items: ["🧊", "❄️", "⛄", "🍦"], opposite: "hot" },
+    { name: "hot", items: ["🔥", "☀️", "☕", "🍲"], opposite: "cold" },
+    { name: "fast", items: ["🚀", "🏎️", "⚡", "🐆"], opposite: "slow" },
+    { name: "slow", items: ["🐌", "🐢", "🦥"], opposite: "fast" },
+    { name: "big", items: ["🐘", "🐳", "🏔️", "🦕"], opposite: "little" },
+    { name: "little", items: ["🐜", "🐭", "🐞", "🦐"], opposite: "big" },
+    { name: "wet", items: ["💧", "🌧️", "🌊", "🛁"], opposite: "dry" },
+    { name: "dry", items: ["🌵", "🍪", "🧸", "🧱"], opposite: "wet", ask: false },
   ];
 
   const MODES = ["class", "function", "feature"];
@@ -75,17 +81,15 @@ App.games.sortit = (() => {
     } else if (mode === "function") {
       const f = pick(FUNCTIONS);
       correctEmoji = pick(f.correct);
-      const exclude = FUNCTIONS.flatMap((x) => x.correct);
-      choices = [correctEmoji, ...pickN(FUNCTION_DISTRACTORS, 2, exclude)];
+      choices = [correctEmoji, ...pickN(FUNCTION_DISTRACTORS, 2, [...f.correct, ...f.maybe])];
       promptText = f.prompt;
       currentSay = f.say;
       binEmoji = "🧰";
     } else {
-      const f = pick(FEATURES);
+      const f = pick(FEATURES.filter((x) => x.ask !== false));
       correctEmoji = pick(f.items);
-      const others = FEATURES.filter((x) => x.name !== f.name);
-      const distractors = pickN(others, 2).map((x) => pick(x.items));
-      choices = [correctEmoji, ...distractors];
+      const opposite = FEATURES.find((x) => x.name === f.opposite);
+      choices = [correctEmoji, ...pickN(opposite.items, 2)];
       promptText = "Which one is " + f.name + "?";
       currentSay = "Which one is " + f.name + "?";
       binEmoji = "🧺";
