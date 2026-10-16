@@ -6,6 +6,7 @@ import { later } from "../core/session.js";
 import { awardStars } from "../core/rewards.js";
 import { glow } from "../core/hint.js";
 import { KEYS, SONGS } from "../logic/music.js";
+import { TAP_BARS, letsPlay } from "../logic/lines.js";
 import { NOTES, WORLD, shade } from "../art/theme.js";
 import { malletSvg } from "../art/gameart.js";
 import { iconImg } from "../art/icons.js";
@@ -116,7 +117,7 @@ function startSong(name, btn) {
   btn.classList.add("on");
   song = SONGS[name].keys;
   songPos = 0;
-  Sound.speak("Let's play " + SONGS[name].name + "! Follow the glowing bar.");
+  Sound.speak(letsPlay(SONGS[name]));
   highlightNext();
 }
 
@@ -147,6 +148,6 @@ export default {
   },
   hint() {
     if (song) glow(bars[song[songPos]]);
-    else Sound.speak("Tap the bars to make music!");
+    else Sound.after(TAP_BARS); // after "Help please", not over it
   },
 };

@@ -62,6 +62,21 @@ export function sizeOf(item) {
 export const MODES = ["class", "function", "feature"];
 export const STAR_EVERY = 4; // a star for every 4 found
 
+// What the narrator says for each kind of prompt (the voice has a clip for each)
+/** @param {string} name */
+const sayFind = (name) => "Find the " + name;
+/** @param {{ name: string }} f */
+const sayWhich = (f) => "Which one is " + f.name + "?";
+
+// Every prompt Sort It can speak, for the narrator's recordings.
+export function spokenPrompts() {
+  return [
+    ...Object.keys(CLASSES).map(sayFind),
+    ...FUNCTIONS.map((f) => f.say),
+    ...FEATURES.filter((f) => f.ask !== false).map(sayWhich),
+  ];
+}
+
 // One round of the given mode. `answers` is everything that would be a
 // right answer to the prompt; exactly one of `choices` is in it.
 export function makeRound(mode, rand = Math.random) {
@@ -73,7 +88,7 @@ export function makeRound(mode, rand = Math.random) {
     return {
       mode,
       prompt: "Find the " + name + "!",
-      say: "Find the " + name,
+      say: sayFind(name),
       bin: "toybox",
       correct,
       answers: CLASSES[name],
@@ -100,7 +115,7 @@ export function makeRound(mode, rand = Math.random) {
   return {
     mode,
     prompt: "Which one is " + f.name + "?",
-    say: "Which one is " + f.name + "?",
+    say: sayWhich(f),
     bin: "basket",
     sized: f.name === "big" || f.name === "little",
     correct,

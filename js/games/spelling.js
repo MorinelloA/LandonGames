@@ -10,6 +10,7 @@ import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { createLevel } from "../core/levels.js";
 import { LEVELS, CLEAN_TO_LEVEL_UP, ERRORS_TO_EASE_DOWN, wordPool, deal } from "../logic/words.js";
+import { LEVEL_UP, greatJob } from "../logic/lines.js";
 import { iconImg } from "../art/icons.js";
 import { NOTES, shade } from "../art/theme.js";
 import { backdropSvg } from "../art/backdrops.js";
@@ -109,7 +110,8 @@ function placeLetter(tile, ch, idx) {
 
 function wordDone() {
   Sound.success();
-  later(() => Sound.speak(word + "! Great job!"), 250);
+  const said = [greatJob(word)]; // "Level up!" joins it, after it, on a level-up
+  later(() => Sound.say(said), 250);
 
   // adapt: three perfect words in a row → harder; a really tough word → easier
   if (errors === 0) {
@@ -120,7 +122,7 @@ function wordDone() {
       deck = [];
       renderLevel();
       awardStars(2, { message: "Level " + level.value + "!" });
-      Sound.speak("Level up!");
+      said.push(LEVEL_UP);
       later(nextWord, 2100);
       return;
     }

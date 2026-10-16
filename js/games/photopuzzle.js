@@ -5,6 +5,7 @@
 // Pick a photo from the wall, then build it.
 import * as Sound from "../core/sound.js";
 import { createPuzzle, loadImage } from "./puzzle-core.js";
+import { PICK_PHOTO } from "../logic/lines.js";
 import { backdropSvg } from "../art/backdrops.js";
 
 const screen = document.getElementById("screen-photopuzzle");
@@ -114,6 +115,6 @@ export default {
   },
   hint() {
     if (pickerEl.classList.contains("hidden")) puzzle.hint();
-    else Sound.speak("Pick a photo!");
+    else Sound.after(PICK_PHOTO); // after "Help please", not over it
   },
 };

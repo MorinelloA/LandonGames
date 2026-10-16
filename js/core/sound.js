@@ -1,6 +1,7 @@
-// Sound engine: every sound is synthesized, so there are no audio files.
-// Sounds are the reward, so there is deliberately NO sound for a wrong
-// answer: mistakes get silence and a short freeze (see freeze.js).
+// Sound engine: effects and music are synthesized; the narrator's lines are
+// recorded clips (voice/). Sounds are the reward, so there is deliberately
+// NO sound for a wrong answer: mistakes get silence and a short freeze (see
+// freeze.js).
 
 let ctx = null;
 let musicOn = false;
@@ -87,44 +88,158 @@ export function star() {
   tone(N.C6, { type: "sine", dur: 0.3, gain: 0.2, when: 0.1 });
 }
 
-/* ---- Speech (the iPad's built-in voice) ----
-   Speaking is deferred a beat: on iOS, starting speech interrupts
-   WebAudio, so a tone played in the same tick as speak() would be
-   silenced. The short delay lets sound effects ring out first. */
-let speakTimer = null;
-let utterances = null; // Safari GCs unreferenced utterances mid-speech
+/* ---- The narrator ----
+   Every line the games say is a recorded clip in voice/ (made by
+   tools/voice.mjs from js/logic/lines.js), played through the same
+   AudioContext as the sound effects, so the two can't take the iPad's
+   audio session from each other. A line without a clip falls back to the
+   iPad's speech synthesis; a test makes sure that never happens.
+
+     speak(text)  one line, replacing whatever is being said
+     say(lines)   several in a row (a story, then its question)
+     after(text)  a line after the ones already going; { max } caps how many wait
+                  (not "then": a module exporting then() looks like a promise to await import())
+     hush()       stop it all (the quiet pause, leaving a game)
+
+   Each start waits a beat (350 ms) so a sound effect played at the same
+   moment rings out first, and that's when the clips get fetched and decoded. */
+const GAP = 180;  // ms between lines in a row
+const KEEP = 40;  // decoded clips kept for reuse (an iPad mini's memory is small)
+let manifestReady = null;
+const buffers = new Map(); // clip file → AudioBuffer, least recently used first
+const loading = new Map(); // clip file → its decode in flight
+let queue = [];      // lines waiting: { text, drop }, drop meaning a newer after(…, { max }) may replace it
+let busy = false;    // a line is playing, or about to
+let run = 0;         // bumped by every replace and hush, which retires older work
+let startTimer = null;
+let source = null;   // the clip playing now
+let voiceBus = null;
+
+function loadManifest() {
+  if (!manifestReady) {
+    manifestReady = fetch("voice/manifest.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
+  }
+  return manifestReady;
+}
+
+// The decoded clip for a line, or null when it has none.
+async function clipFor(line) {
+  const m = await loadManifest();
+  const file = m && m.lines && m.lines[line];
+  if (!file) return null;
+  if (buffers.has(file)) {
+    const buf = buffers.get(file);
+    buffers.delete(file);
+    buffers.set(file, buf);
+    return buf;
+  }
+  if (!loading.has(file)) {
+    loading.set(file, fetch("voice/" + file)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(file))))
+      .then((data) => new Promise((ok, fail) => ensure().decodeAudioData(data, ok, fail)))
+      .then((buf) => {
+        buffers.set(file, buf);
+        if (buffers.size > KEEP) buffers.delete(buffers.keys().next().value);
+        return buf;
+      })
+      .finally(() => loading.delete(file)));
+  }
+  return loading.get(file);
+}
+
+function voiceOut() {
+  const ac = ensure();
+  if (!voiceBus || voiceBus.context !== ac) {
+    voiceBus = ac.createGain();
+    voiceBus.connect(ac.destination);
+  }
+  return voiceBus;
+}
+
+async function next(r) {
+  if (r !== run) return;
+  const item = queue.shift();
+  if (!item) {
+    busy = false;
+    return;
+  }
+  const line = item.text;
+  const buf = await clipFor(line).catch(() => null);
+  if (r !== run) return;
+  if (!buf) {
+    fallback(line, () => next(r));
+    return;
+  }
+  const src = ensure().createBufferSource();
+  src.buffer = buf;
+  src.connect(voiceOut());
+  src.onended = () => {
+    if (source === src) source = null;
+    if (r === run) setTimeout(() => next(r), GAP);
+  };
+  source = src;
+  src.start();
+}
+
+export function say(lines, { delay = 350 } = {}) {
+  stop();
+  const r = run;
+  queue = lines.map((text) => ({ text, drop: false }));
+  busy = true;
+  for (const line of lines) clipFor(line).catch(() => {});
+  startTimer = setTimeout(() => next(r), delay);
+}
 
 export function speak(text, opts) {
   say([text], opts);
 }
 
-// Several lines in a row, each finishing before the next starts (a story,
-// then its question). Queued in one go, so nothing cuts anything off.
-export function say(lines, { rate = 0.95, pitch = 1.1, delay = 350 } = {}) {
-  if (!("speechSynthesis" in window)) return;
-  clearTimeout(speakTimer);
-  // cancel() on an IDLE synthesizer is a known iOS wedge (speaking gets
-  // stuck true forever) — only cancel when something is actually queued
-  if (speechBusy()) window.speechSynthesis.cancel();
-  const us = lines.map((text) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.pitch = pitch;
-    u.lang = "en-US";
-    return u;
-  });
-  // hand the audio session back to WebAudio when speech finishes (iOS)
-  us[us.length - 1].onend = us[us.length - 1].onerror = () => {
-    if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
-  };
-  utterances = us;
-  speakTimer = setTimeout(() => utterances.forEach((u) => window.speechSynthesis.speak(u)), delay);
+export function after(text, { max = Infinity } = {}) {
+  if (!busy) return say([text]);
+  // only lines added with a cap make way, oldest first (a quick count skips ahead, its prompt stays)
+  for (let waiting = queue.filter((q) => q.drop); waiting.length >= max; waiting.shift()) {
+    queue.splice(queue.indexOf(waiting[0]), 1);
+  }
+  queue.push({ text, drop: max !== Infinity });
+  clipFor(text).catch(() => {});
 }
 
-// stop current AND pending speech (freeze / leaving a game)
 export function hush() {
-  clearTimeout(speakTimer);
+  stop();
+}
+
+function stop() {
+  run++;
+  clearTimeout(startTimer);
+  queue = [];
+  busy = false;
+  if (source) {
+    source.onended = null;
+    try { source.stop(); } catch (_) {}
+    source = null;
+  }
+  // cancel() on an IDLE synthesizer is a known iOS wedge (speaking gets
+  // stuck true forever), so only cancel when something is actually queued
   if (speechBusy()) window.speechSynthesis.cancel();
+}
+
+// The fallback: one line in the iPad's built-in voice, then carry on.
+let utterance = null; // Safari collects unreferenced utterances mid-speech
+function fallback(line, done) {
+  if (!("speechSynthesis" in window)) return done();
+  const u = new SpeechSynthesisUtterance(line);
+  u.rate = 0.95;
+  u.pitch = 1.1;
+  u.lang = "en-US";
+  u.onend = u.onerror = () => {
+    // hand the audio session back to WebAudio (iOS)
+    if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
+    done();
+  };
+  utterance = u;
+  window.speechSynthesis.speak(u);
 }
 
 /* ---- Background music: soft pentatonic loop ---- */
@@ -137,8 +252,9 @@ const melody = [
 
 function musicTick() {
   const f = melody[musicStep % melody.length];
-  if (f) tone(f, { type: "sine", dur: 0.5, gain: 0.05 });
-  if (musicStep % 8 === 0) tone(N.C3, { type: "sine", dur: 1.4, gain: 0.04 });
+  const under = source ? 0.45 : 1; // softer while the narrator talks
+  if (f) tone(f, { type: "sine", dur: 0.5, gain: 0.05 * under });
+  if (musicStep % 8 === 0) tone(N.C3, { type: "sine", dur: 1.4, gain: 0.04 * under });
   musicStep++;
 }
 

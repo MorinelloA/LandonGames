@@ -3,16 +3,19 @@
 // any change installs fresh copies all at once, and the old cache goes once
 // the new one takes over. Pages and files are served from the cache first.
 //
-// The family photos live in their own cache, kept in step with
-// photos/manifest.json: photo URLs carry a hash of the photo, so a changed
-// photo is a new URL, and ones no longer listed are dropped. The manifest
-// itself comes from the network when it can, so new photos appear.
+// The family photos and the narrator's clips each live in their own cache,
+// kept in step with photos/manifest.json and voice/manifest.json: file names
+// carry a hash of the file, so a changed one is a new name, and ones no
+// longer listed are dropped. The manifests come from the network when they
+// can, so new photos and lines arrive without a new version (and a code
+// change doesn't download every clip again).
 //
 // Caches are named lg-…; the other apps on this site use mr- (Marble Run)
 // and pf- (Pictures), and each only ever touches its own.
 
-const VERSION = 'lg-2f7e66b5b5a5';
+const VERSION = 'lg-3d0057fb7ab8';
 const PHOTOS = 'lg-photos';
+const VOICE = 'lg-voice';
 const ASSETS = [
   './',
   'index.html',
@@ -65,6 +68,7 @@ const ASSETS = [
   'js/logic/counting.js',
   'js/logic/feelings.js',
   'js/logic/jigsaw.js',
+  'js/logic/lines.js',
   'js/logic/math.js',
   'js/logic/maze.js',
   'js/logic/memory.js',
@@ -245,30 +249,35 @@ const ASSETS = [
   'vendor/fluent-emoji-flat/zebra.svg',
 ];
 
-async function syncPhotos() {
+// Bring a folder's cache in step with its manifest: fetch the manifest
+// fresh, drop the files it no longer lists, fetch the ones it adds.
+async function syncFolder(cacheName, folder, filesIn) {
   try {
-    const res = await fetch('photos/manifest.json', { cache: 'no-cache' });
+    const res = await fetch(folder + '/manifest.json', { cache: 'no-cache' });
     if (!res.ok) return;
-    const data = await res.clone().json();
-    const entries = Array.isArray(data) ? data.map((f) => ({ src: f })) : data.photos || [];
-    const wanted = new Set(entries.flatMap((e) => [e.src, e.thumb].filter(Boolean).map((p) => new URL('photos/' + p, self.registration.scope).href)));
-    const cache = await caches.open(PHOTOS);
-    await cache.put('photos/manifest.json', res);
+    const wanted = new Set(filesIn(await res.clone().json()).map((p) => new URL(folder + '/' + p, self.registration.scope).href));
+    const cache = await caches.open(cacheName);
+    await cache.put(folder + '/manifest.json', res);
     for (const req of await cache.keys()) {
-      if (!wanted.has(req.url) && !req.url.endsWith('/photos/manifest.json')) await cache.delete(req);
+      if (!wanted.has(req.url) && !req.url.endsWith('/' + folder + '/manifest.json')) await cache.delete(req);
     }
     const have = new Set((await cache.keys()).map((r) => r.url));
     await Promise.all([...wanted].filter((u) => !have.has(u)).map((u) => cache.add(u).catch(() => {})));
   } catch (_) {
-    // offline or a bad manifest: keep whatever photos are already cached
+    // offline or a bad manifest: keep whatever is already cached
   }
 }
+
+const syncPhotos = () => syncFolder(PHOTOS, 'photos', (data) =>
+  (Array.isArray(data) ? data.map((f) => ({ src: f })) : data.photos || []).flatMap((e) => [e.src, e.thumb].filter(Boolean)));
+const syncVoice = () => syncFolder(VOICE, 'voice', (data) => [...new Set(Object.values(data.lines || {}))]);
+const FOLDERS = [['photos', PHOTOS, syncPhotos], ['voice', VOICE, syncVoice]];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(VERSION)
       .then((cache) => cache.addAll(ASSETS.map((url) => new Request(url, { cache: 'reload' }))))
-      .then(syncPhotos)
+      .then(() => Promise.all([syncPhotos(), syncVoice()]))
       .then(() => self.skipWaiting()),
   );
 });
@@ -276,7 +285,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('lg-') && k !== VERSION && k !== PHOTOS).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('lg-') && ![VERSION, PHOTOS, VOICE].includes(k)).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -287,29 +296,31 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
   const path = url.pathname.slice(new URL(self.registration.scope).pathname.length);
 
-  // the photo list: fresh when online (and the photos with it), cached when not
-  if (path === 'photos/manifest.json') {
-    event.respondWith(
-      fetch(req).then((res) => {
-        if (res.ok) {
-          const copy = res.clone();
-          caches.open(PHOTOS).then((c) => c.put('photos/manifest.json', copy)).then(syncPhotos);
-        }
-        return res;
-      }).catch(() => caches.open(PHOTOS).then((c) => c.match('photos/manifest.json')).then((hit) => hit || Response.error())),
-    );
-    return;
-  }
+  for (const [folder, cacheName, sync] of FOLDERS) {
+    // the photo or line list: fresh when online (and its files with it), cached when not
+    if (path === folder + '/manifest.json') {
+      event.respondWith(
+        fetch(req).then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(cacheName).then((c) => c.put(folder + '/manifest.json', copy)).then(sync);
+          }
+          return res;
+        }).catch(() => caches.open(cacheName).then((c) => c.match(folder + '/manifest.json')).then((hit) => hit || Response.error())),
+      );
+      return;
+    }
 
-  // a photo: from the photo cache, or fetched and kept
-  if (path.startsWith('photos/')) {
-    event.respondWith(
-      caches.open(PHOTOS).then((cache) => cache.match(req).then((hit) => hit || fetch(req).then((res) => {
-        if (res.ok) cache.put(req, res.clone());
-        return res;
-      }))),
-    );
-    return;
+    // a photo or a clip: from its cache, or fetched and kept
+    if (path.startsWith(folder + '/')) {
+      event.respondWith(
+        caches.open(cacheName).then((cache) => cache.match(req).then((hit) => hit || fetch(req).then((res) => {
+          if (res.ok) cache.put(req, res.clone());
+          return res;
+        }))),
+      );
+      return;
+    }
   }
 
   // any page load is the one page; everything else is a kept file

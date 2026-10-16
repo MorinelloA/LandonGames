@@ -9,6 +9,7 @@ import { spriteSvg, useIcon } from "../art/ui.js";
 import { cardSvg } from "../art/cards.js";
 import { catSvg } from "../art/mascot.js";
 import { backdropSvg } from "../art/backdrops.js";
+import { HELP } from "../logic/lines.js";
 
 const HOME_TITLE = "Landon's Game Room";
 
@@ -100,7 +101,7 @@ export function start(gameList) {
   // a genuine hint while the cat points to it.
   helpBtn.addEventListener("click", () => {
     Sound.ensure();
-    Sound.speak("Help please");
+    Sound.speak(HELP);
     Buddy.point();
     if (currentGame && games[currentGame].hint) games[currentGame].hint();
   });

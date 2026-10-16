@@ -7,6 +7,7 @@ import { awardStars, praise } from "../core/rewards.js";
 import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { ANIMALS } from "../logic/memory.js";
+import { FOUND_ANIMALS } from "../logic/lines.js";
 import { iconImg } from "../art/icons.js";
 import { backdropSvg } from "../art/backdrops.js";
 import { svg, ellipse, circle, g } from "../art/svg.js";
@@ -66,7 +67,7 @@ function tapCard(btn, c) {
         later(() => {
           Sound.fanfare();
           awardStars(3, { message: "You found them all!" });
-          Sound.speak("You found all the animals! Amazing!");
+          Sound.speak(FOUND_ANIMALS);
           later(build, 2300);
         }, 600);
       }

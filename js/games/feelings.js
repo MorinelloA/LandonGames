@@ -12,6 +12,7 @@ import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { createLevel } from "../core/levels.js";
 import { LEVELS, CLEAN_TO_LEVEL_UP, MISSES_TO_EASE_DOWN, storiesFor, question, choicesFor } from "../logic/feelings.js";
+import { feelingRight } from "../logic/lines.js";
 import { storyScene } from "../art/scenes.js";
 import { faceSvg } from "../art/people.js";
 import { useIcon } from "../art/ui.js";
@@ -83,7 +84,7 @@ function resolve(card, feeling) {
     Sound.pop();
     card.classList.add("chosen");
     sceneEl.innerHTML = storyScene(current.id, feeling); // now the character shows it
-    Sound.speak(feeling + "! That's right!");
+    Sound.speak(feelingRight(feeling));
     missStreak = 0;
     if (!hadError) {
       cleanStreak++;

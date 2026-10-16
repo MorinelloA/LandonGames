@@ -9,6 +9,7 @@ import { shuffle } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { createLevel } from "../core/levels.js";
 import { MAX_LEVEL, LEVEL_UP_STREAK, LEVEL_DOWN_MISSES, STAR_EVERY, generate, choices } from "../logic/math.js";
+import { LEVEL_UP } from "../logic/lines.js";
 import { backdropSvg } from "../art/backdrops.js";
 
 const screen = document.getElementById("screen-mathpop");
@@ -91,7 +92,7 @@ function resolveGuess(b, v) {
       winStreak = 0;
       renderLevel();
       awardStars(1, { message: "Level " + level.value + "!" });
-      Sound.speak("Level up!");
+      Sound.speak(LEVEL_UP);
     } else if (solved % STAR_EVERY === 0) {
       awardStars(1);
     } else {

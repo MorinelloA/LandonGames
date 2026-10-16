@@ -6,6 +6,7 @@ import { later } from "../core/session.js";
 import { awardStars } from "../core/rewards.js";
 import { createLevel } from "../core/levels.js";
 import { SIZES, generate, canStep, solve } from "../logic/maze.js";
+import { FOUND_CHEESE } from "../logic/lines.js";
 import { mazeWallsPath } from "../art/gameart.js";
 import { iconImg } from "../art/icons.js";
 import { backdropSvg } from "../art/backdrops.js";
@@ -149,7 +150,7 @@ function win() {
   mouseEl.classList.add("win");
   Sound.fanfare();
   awardStars(2, { message: "Cheese!" });
-  Sound.speak("You found the cheese! Great job!");
+  Sound.speak(FOUND_CHEESE);
   if (level.value < SIZES.length) {
     level.up();
     renderLevel();

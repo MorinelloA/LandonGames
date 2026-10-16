@@ -16,6 +16,7 @@ import { createLevel } from "../core/levels.js";
 import { stageScale } from "../core/stage.js";
 import { MIN_SIZE, MAX_SIZE, nextSize } from "../logic/puzzle.js";
 import { cutEdges } from "../logic/jigsaw.js";
+import { WHOLE_PICTURE } from "../logic/lines.js";
 import { piecePath, MARGIN } from "../art/jigsaw.js";
 import { g, path, svg } from "../art/svg.js";
 
@@ -162,7 +163,7 @@ export function createPuzzle({ screenEl, levelEl, storageKey, onComplete }) {
   function done() {
     Sound.fanfare();
     awardStars(2, { message: "Puzzle done!" });
-    Sound.speak("You built the whole picture! Amazing!");
+    Sound.speak(WHOLE_PICTURE);
     // a clean solve unlocks a bigger grid, a tough one shrinks it
     size.set(nextSize(size.value, errors));
     later(onComplete, 2600);

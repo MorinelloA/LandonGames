@@ -11,6 +11,7 @@ import { later } from "../core/session.js";
 import { awardStars, praise } from "../core/rewards.js";
 import { shuffle } from "../core/rng.js";
 import { LETTERS, LOWERCASE, DIGITS, subdivide, makeCutLine } from "../logic/trace.js";
+import { CUT_LINE, traceThe, niceTracing } from "../logic/lines.js";
 import { backdropSvg } from "../art/backdrops.js";
 import { NOTES } from "../art/theme.js";
 import { pencil, scissors } from "../art/gameart.js";
@@ -113,10 +114,9 @@ function buildChar() {
   startStroke();
 
   if (mode === "cut") {
-    Sound.speak("Cut along the line!");
+    Sound.speak(CUT_LINE);
   } else {
-    const kind = mode === "num" ? "number " : mode === "lower" ? "little letter " : "big letter ";
-    Sound.speak("Trace the " + kind + currentChar());
+    Sound.speak(traceThe(mode, currentChar()));
   }
 }
 
@@ -191,7 +191,7 @@ function charDone() {
   } else {
     completedChars++;
     praise();
-    Sound.speak(currentChar() + "! Nice tracing!");
+    Sound.speak(niceTracing(currentChar()));
     if (completedChars % 3 === 0) awardStars(1, { message: "Great tracing!" });
     charIdx++;
   }

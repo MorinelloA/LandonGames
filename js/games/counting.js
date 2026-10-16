@@ -10,6 +10,7 @@ import { shuffle, pick } from "../core/rng.js";
 import { glow } from "../core/hint.js";
 import { flyInto, flash } from "../core/fx.js";
 import { THEMES, newTarget, answerOptions } from "../logic/counting.js";
+import { HOW_MANY, countThe, number, countRight } from "../logic/lines.js";
 import { iconImg } from "../art/icons.js";
 import { binSvg } from "../art/gameart.js";
 import { backdropSvg } from "../art/backdrops.js";
@@ -46,7 +47,7 @@ let theme = null;
 let place = "";
 
 function say() {
-  Sound.speak("Count the " + theme.plural + "!");
+  Sound.speak(countThe(theme));
 }
 
 function newRound() {
@@ -112,11 +113,11 @@ function countItem(item, intoBasket) {
     item.insertAdjacentHTML("beforeend", `<span class="count-tag">${counted}</span>`);
   }
   Sound.pop();
+  // each number waits its turn, so quick taps don't cut one off (two at most waiting)
+  Sound.after(number(counted), { max: 2 });
   if (counted === target) {
-    Sound.say([String(counted), "How many?"], { rate: 1.05 });
+    Sound.after(HOW_MANY);
     showAnswers();
-  } else {
-    Sound.speak(String(counted), { rate: 1.05 });
   }
 }
 
@@ -125,7 +126,7 @@ function tapAnswer(btn, n) {
   if (n === target) {
     answered = true;
     Sound.success();
-    later(() => Sound.speak(target + "! That's right!"), 200);
+    later(() => Sound.speak(countRight(target)), 200);
     awardStars(1, { message: target + "!" });
     later(newRound, 2200);
   } else {
