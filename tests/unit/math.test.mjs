@@ -1,9 +1,11 @@
 // Math Bubbles follows Landon's IEP math goal: sums within 10 then 20,
-// differences within 20, from a field of 2 then 3 answers.
+// differences within 20, from a field of 2 then 3 answers. The narrator
+// can read every problem out.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { seeded } from "../helpers.mjs";
 import { MAX_LEVEL, bubbleCount, levelMax, generate, choices } from "../../js/logic/math.js";
+import { allLines, readProblem } from "../../js/logic/lines.js";
 
 const OPS = { 1: ["+"], 2: ["+"], 3: ["+", "−"], 4: ["+", "−"], 5: ["+", "−"], 6: ["+", "−", "×"] };
 
@@ -27,6 +29,23 @@ test("every problem stays inside its level", () => {
       if (p.op === "×") assert.ok(p.a <= 5 && p.b <= 5);
     }
     assert.deepEqual([...seen].sort(), [...OPS[level]].sort(), `level ${level} uses all its operations`);
+  }
+});
+
+test("the narrator reads a problem in the order it's written", () => {
+  assert.deepEqual(readProblem({ a: 3, op: "+", b: 4 }), ["3", "plus", "4", "equals what?"]);
+  assert.deepEqual(readProblem({ a: 9, op: "−", b: 3 }), ["9", "minus", "3", "equals what?"]);
+  assert.deepEqual(readProblem({ a: 4, op: "×", b: 5 }), ["4", "times", "5", "equals what?"]);
+});
+
+test("every problem, at every level, is read with lines the narrator has", () => {
+  const recorded = new Set(allLines());
+  const rand = seeded(13);
+  for (let level = 1; level <= MAX_LEVEL; level++) {
+    for (let i = 0; i < 5000; i++) {
+      const p = generate(level, rand);
+      for (const line of readProblem(p)) assert.ok(recorded.has(line), `level ${level}: ${p.a} ${p.op} ${p.b} says "${line}"`);
+    }
   }
 });
 

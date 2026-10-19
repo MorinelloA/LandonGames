@@ -107,7 +107,11 @@ async function call(method, route, { query, json, form } = {}) {
   throw new Error(`${route} failed after retries: ${last}`);
 }
 
-const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const UNDER_TWENTY = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+// zero to thirty: Counting goes to 10, Math Bubbles' problems to 30
+const NUMBER_WORDS = [...UNDER_TWENTY, 'twenty', ...UNDER_TWENTY.slice(1, 10).map((w) => 'twenty-' + w), 'thirty'];
+const NUMBER = /\b(30|[12][0-9]|[0-9])\b/g;
 // Capitals that, alone before "! Nice tracing!", read as a word ("H!" as
 // "Sh", "K!" as "Okay"), found by `transcribe`: sent spelled as said.
 const LETTER_SAID = { A: 'Ay', H: 'Aitch', I: 'Eye', K: 'Kay', N: 'En', R: 'Ar', W: 'Double-you', Y: 'Why' };
@@ -122,7 +126,7 @@ export function spokenForm(line, overrides = {}) {
   if (overrides[line]) return overrides[line];
   let s = line.replace(/(^|letter )([a-z])(?=!|$)/, (_, before, ch) => before + ch.toUpperCase());
   s = s.replace(/^([A-Z])(?=! Nice tracing!$)/, (ch) => LETTER_SAID[ch] || ch);
-  s = s.replace(/\b(10|[0-9])\b/g, (n, _, at) => {
+  s = s.replace(NUMBER, (n, _, at) => {
     const word = NUMBER_WORDS[Number(n)];
     return at === 0 ? word[0].toUpperCase() + word.slice(1) : word;
   });
@@ -341,7 +345,7 @@ const canon = new Map(SAME.flatMap((group) => group.map((word) => [word, group[0
 
 // Lower case, numbers as words, no punctuation, homophones folded together.
 function normal(text) {
-  return text.toLowerCase().replace(/\b(10|[0-9])\b/g, (n) => NUMBER_WORDS[Number(n)])
+  return text.toLowerCase().replace(NUMBER, (n) => NUMBER_WORDS[Number(n)])
     .replace(/double[\s-]?you/g, 'doubleyou')
     .replace(/[^a-z' ]+/g, ' ').replace(/'/g, '').trim().split(/\s+/)
     .map((word) => canon.get(word) || word).join(' ');

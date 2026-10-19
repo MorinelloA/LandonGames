@@ -5,6 +5,7 @@
 import { WORDS } from "./words.js";
 import { MOODS, STORIES, question } from "./feelings.js";
 import { THEMES, MIN_COUNT, MAX_COUNT } from "./counting.js";
+import { MAX_LEVEL, levelMax } from "./math.js";
 import { ANIMALS } from "./memory.js";
 import { SONGS } from "./music.js";
 import { LETTERS, LOWERCASE, DIGITS } from "./trace.js";
@@ -41,6 +42,14 @@ export function traceThe(mode, char) {
 /** @param {string} char */
 export const niceTracing = (char) => char + "! Nice tracing!";
 
+// Math Bubbles reads each problem a word at a time, in the order it's
+// written: 3 + 4 = ? is "3", "plus", "4", "equals what?"
+/** @type {Record<string, string>} */
+export const SIGN_WORDS = { "+": "plus", "−": "minus", "×": "times" };
+export const EQUALS_WHAT = "equals what?";
+/** @param {{ a: number, op: string, b: number }} problem */
+export const readProblem = (problem) => [number(problem.a), SIGN_WORDS[problem.op], number(problem.b), EQUALS_WHAT];
+
 // Everything the games can say, built from the same data they use.
 export function allLines() {
   const lines = [HELP, LEVEL_UP, HOW_MANY, FOUND_CHEESE, FOUND_ANIMALS, WHOLE_PICTURE, PICK_PHOTO, TAP_BARS, CUT_LINE];
@@ -49,6 +58,8 @@ export function allLines() {
   for (const theme of THEMES) lines.push(countThe(theme));
   for (let n = 1; n <= MAX_COUNT; n++) lines.push(number(n));
   for (let n = MIN_COUNT; n <= MAX_COUNT; n++) lines.push(countRight(n));
+  for (let n = 1; n <= levelMax(MAX_LEVEL); n++) lines.push(number(n));
+  lines.push(...Object.values(SIGN_WORDS), EQUALS_WHAT);
   for (const word of WORDS) lines.push(word, greatJob(word));
   for (const animal of ANIMALS) lines.push(animal.name);
   for (const song of Object.values(SONGS)) lines.push(letsPlay(song));

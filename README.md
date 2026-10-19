@@ -6,7 +6,7 @@ Twelve games for an iPad, each tied to one of Landon's IEP goals. It's plain HTM
 
 | Game | What it teaches |
 |---|---|
-| Math Bubbles | Addition, subtraction and, at the top level, multiplication: drag the bubble with the answer into the sum, under the sea. Levels 1 to 4 follow the IEP math goal (2 answer choices with sums within 10, up to 3 choices within 20); 5 and 6 are room to grow. Four right in a row levels up, two misses ease back down. |
+| Math Bubbles | Addition, subtraction and, at the top level, multiplication: drag the bubble with the answer into the sum, under the sea; it counts as soon as it touches the sum. The narrator reads each problem out ("3 plus 4 equals what?"), and tapping the sum or its speaker reads it again. Levels 1 to 4 follow the IEP math goal (2 answer choices with sums within 10, up to 3 choices within 20); 5 and 6 are room to grow. Four right in a row levels up, two misses ease back down. |
 | Word Builder | Spelling and reading: drag the letter blocks into the slots; the iPad says the word. Words grow from 3 to 6 letters, and decoy letters join at the top levels. |
 | Animal Match | Memory: the pairs game; each animal says its name when flipped. |
 | Copy Cat | Working memory: the cat plays a growing pattern on four pads (each its own colour and shape), then it's his turn. A mistake just replays the pattern. |
@@ -89,7 +89,7 @@ The photos can be opened by anyone who knows their address (they're kept out of 
 
 Every line the games say is recorded once with ElevenLabs and played from `voice/` through Web Audio, beside the sound effects. That sounds far better than the iPad's built-in voice, and it ends the old tug-of-war between speech and Web Audio over the iPad's audio session. A line without a clip falls back to the built-in voice, and a test fails if any line lacks one.
 
-- `js/logic/lines.js` builds every spoken line from the games' data; the games never speak text built anywhere else. `allLines()` lists all 328.
+- `js/logic/lines.js` builds every spoken line from the games' data; the games never speak text built anywhere else. `allLines()` lists all 352.
 - `tools/voice.json` holds the voices (Sarah narrates, Liam says "Help please"), the model (`eleven_multilingual_v2`) and its settings, the same as The Off-Ramp's.
 - `tools/voice.mjs` makes the clips: `build` records any line that's new or changed (each is cached by a hash of its request, so a rerun only pays for what changed), trims the silence, evens out the loudness and writes `voice/<hash>.mp3` and `voice/manifest.json`. Needs ffmpeg. The key comes from `ELEVENLABS_API_KEY`, else from The Off-Ramp's pipeline config, and is never printed.
 
@@ -146,7 +146,7 @@ The screenshots and walkthrough video of the game on tonyt908.com come from `too
 - The service worker stays off on 127.0.0.1 (`js/main.js`), so the tools always get the files on disk.
 - Menu: `.game-card[data-game=…]`, and `#home-btn` to go back to it.
 - Copy Cat: `#simon-start`; the four `.simon-pad` buttons, in pad order, have the `lit` class while lit; `#title-badge` reads "Pattern N"; `#simon-says` starts with "Your turn!" when the player's turn comes. The screenshot is timed to the first pad, which lights 700 ms after Start.
-- Math Bubbles: `#math-problem` holds the two numbers, the sign (+, − or ×) and a "?" until it's answered; `.bubble[data-value]`, where tapping a bubble answers; `#math-drop`.
+- Math Bubbles: `#math-problem` holds the two numbers, the sign (+, − or ×) and a "?" until it's answered (its speaker, `#math-hear`, sits beside it, not in it); `.bubble[data-value]`, where tapping a bubble answers; `#math-drop`, the "?", which fills the moment a right answer lands. A drop counts anywhere it touches `#math-problem`, so dragging onto `#math-drop` still works.
 - Cheese Maze: `#maze-board`, whose inline width is the board's and whose paths sit inside a 14 px frame (`PAD` in `js/games/maze.js`); its walls stay the first `<path>` in its SVG, with `M x y H…` for a cell's top wall and `M x y V…` for its left wall; `#title-badge` reads "Level N"; `SIZES` and `solve` exported from `js/logic/maze.js`.
 - Feelings: `STORIES` exported from `js/logic/feelings.js`; `#feel-sentence` shows a story's `text` exactly; `.face-card[data-feeling=…]`; `#feel-drop`.
 

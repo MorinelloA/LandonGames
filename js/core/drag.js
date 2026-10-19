@@ -3,6 +3,7 @@
 //   enable(el, {
 //     canDrag: () => bool,        optional gate
 //     targets: () => [elements],  possible drop targets
+//     reach: 0,                   optional: how far (stage units) outside a target still lands on it
 //     onDrop: (target) => bool,   return true if the drop was accepted
 //     onPickup: () => {},         optional
 //     onEnd: () => {},            optional: after any drag, dropped or not
@@ -15,6 +16,26 @@
 let screenPerUnit = () => 1;
 export function setScale(fn) {
   screenPerUnit = fn;
+}
+
+// Which box a drop at (x, y) lands on: the nearest one within `reach` of
+// the point, or -1. At reach 0 the point has to be on a box, and where two
+// boxes touch the first one wins.
+/**
+ * @param {number} x @param {number} y
+ * @param {{ left: number, top: number, right: number, bottom: number }[]} boxes
+ * @param {number} [reach]
+ */
+export function landing(x, y, boxes, reach = 0) {
+  let best = -1, bestDist = Infinity;
+  boxes.forEach((b, i) => {
+    const dist = Math.hypot(Math.max(b.left - x, 0, x - b.right), Math.max(b.top - y, 0, y - b.bottom));
+    if (dist <= reach && dist < bestDist) {
+      best = i;
+      bestDist = dist;
+    }
+  });
+  return best;
 }
 
 export function enable(el, opts) {
@@ -62,19 +83,14 @@ export function enable(el, opts) {
       // edge, Control Center), not that he let go here: never a drop.
       const cancelled = ev.type === "pointercancel";
 
-      // find the drop target under the dragged element's center, measured
-      // while it's still where the finger left it
+      // find the drop target under (or within reach of) the dragged
+      // element's center, measured while it's still where the finger left it
       const r = el.getBoundingClientRect();
       el.classList.remove("dragging");
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      let target = null;
-      for (const t of (!cancelled && opts.targets ? opts.targets() : [])) {
-        const tr = t.getBoundingClientRect();
-        if (cx >= tr.left && cx <= tr.right && cy >= tr.top && cy <= tr.bottom) {
-          target = t;
-          break;
-        }
-      }
+      const targets = !cancelled && opts.targets ? opts.targets() : [];
+      const hit = landing(cx, cy, targets.map((t) => t.getBoundingClientRect()), (opts.reach || 0) * (screenPerUnit() || 1));
+      const target = hit < 0 ? null : targets[hit];
 
       el.style.transition = "";
       if (opts.onEnd) opts.onEnd();

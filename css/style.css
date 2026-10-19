@@ -596,11 +596,18 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
 }
 
 /* ===== Math Bubbles ===== */
-#math-problem {
+.math-sum {
   position: absolute;
   left: 50%;
   top: 12px;
   translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-right: 76px; /* balances the speaker, keeping the sum centred */
+}
+
+#math-problem {
   height: 118px;
   padding: 0 34px;
   display: flex;
@@ -609,9 +616,13 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
   font-size: 80px;
   font-weight: 700;
   white-space: nowrap;
+  cursor: pointer; /* tap it to hear it again */
+  transition: box-shadow 0.15s;
 }
 
 #math-problem .op { color: var(--accent-mathpop); }
+/* a held bubble counts anywhere on the sum, so all of it glows */
+#math-problem.armed { box-shadow: 0 7px 0 var(--paper-deep), 0 0 0 6px rgba(255, 255, 255, 0.8), 0 0 30px 10px var(--glow); }
 
 #math-drop {
   width: 112px;
@@ -672,7 +683,8 @@ button.pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--paper
 
 .bubble.pop .bubble-inner { animation: bubblePop 0.35s forwards; }
 .bubble.wrong .bubble-inner { animation: shake 0.4s; }
-.bubble.dragging .bubble-inner { animation: none; }
+.bubble.dragging .bubble-inner,
+.bubble.landing .bubble-inner { animation: none; }
 
 @keyframes bob {
   0%, 100% { transform: translateY(0); }

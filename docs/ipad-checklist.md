@@ -23,9 +23,10 @@ Install and offline play (step 9) need the site served over HTTPS, so do that st
    - Right answers pop, chime and speak; wrong answers are silent, with the hourglass pause.
    - In Feelings, each story is heard to the end before "How does he feel?", for every story.
    - Word Builder: after a level-up, "Level up!" is heard after "… Great job!". Counting Time: tapping quickly, no number is cut off.
+   - Math Bubbles: each new problem is read out ("3 plus 4 equals what?"), after "Level up!" when there is one, and tapping the sum or its speaker reads it again.
    - With the music on, the voice is clear over it (the music dips while it talks), and the voice is about as loud as the sound effects.
    - Interrupt it: pull down Control Center and dismiss it, swipe to another app and back. Sounds and the voice both come back without reloading.
-4. **Dragging.** In Sort It, Word Builder, Math Bubbles, Counting, Feelings and both puzzles, a dragged picture stays under the finger all the way, and lands where it's let go. Pull down Control Center in the middle of a drag: the piece glides back and nothing counts as an answer.
+4. **Dragging.** In Sort It, Word Builder, Math Bubbles, Counting, Feelings and both puzzles, a dragged picture stays under the finger all the way, and lands where it's let go. In Math Bubbles a bubble counts as soon as it touches the sum, anywhere on it, and glides into the box. Pull down Control Center in the middle of a drag: the piece glides back and nothing counts as an answer.
 5. **The cat.** It waves on the menu, cheers a right answer, and points while Help is showing a hint. It never does anything after a wrong answer. In Copy Cat the big cat plays the pattern and the corner cat isn't there.
 6. **Each game once.** Play a round of all twelve: every one shows its scene, Help gives a real hint, and Home then the same game again within a second starts cleanly (no doubled round or speech).
 7. **Memory.** Play 20 puzzles in a row (Puzzle Builder, then Picture Puzzle with different photos). Nothing slows down, and the page doesn't reload by itself.

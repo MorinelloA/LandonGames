@@ -45,6 +45,11 @@ test("letters and numbers go to the voice in a form it reads right", () => {
   assert.equal(spokenForm("h! Nice tracing!"), "Aitch! Nice tracing!");
   assert.equal(spokenForm("B! Nice tracing!"), "B! Nice tracing!");
   assert.equal(spokenForm("9"), "Nine.");
+  assert.equal(spokenForm("17"), "Seventeen.");
+  assert.equal(spokenForm("21"), "Twenty-one.");
+  assert.equal(spokenForm("30"), "Thirty.");
+  assert.equal(spokenForm("plus"), "plus");
+  assert.equal(spokenForm("equals what?"), "equals what?");
   assert.equal(spokenForm("3! That's right!"), "Three! That's right!");
   assert.equal(spokenForm("Trace the number 0"), "Trace the number zero");
   assert.equal(spokenForm("apple! Great job!"), "apple! Great job!");

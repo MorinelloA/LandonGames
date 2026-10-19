@@ -110,7 +110,7 @@ function sample(level, n = 3000) {
 const OPS = { "+": "adding", "−": "taking away", "×": "times" };
 
 section("math", "Math Bubbles",
-  p(`Drag the bubble with the answer into the sum. The wrong answers are near the right one and stay within the level's numbers. ${LEVEL_UP_STREAK} right in a row moves up a level; ${LEVEL_DOWN_MISSES} misses in a row move back down. A star for every ${MATH_STARS} solved. Levels 1 to 4 follow the IEP math goal; 5 and 6 are room to grow.`) +
+  p(`Drag the bubble with the answer into the sum; it counts as soon as it touches the sum. The narrator reads each problem out ("3 plus 4 equals what?"), and tapping the sum reads it again. The wrong answers are near the right one and stay within the level's numbers. ${LEVEL_UP_STREAK} right in a row moves up a level; ${LEVEL_DOWN_MISSES} misses in a row move back down. A star for every ${MATH_STARS} solved. Levels 1 to 4 follow the IEP math goal; 5 and 6 are room to grow.`) +
   table(["Level", "Problems", "Numbers up to", "Answer bubbles", "For example"],
     Array.from({ length: MAX_LEVEL }, (_, i) => {
       const level = i + 1;
